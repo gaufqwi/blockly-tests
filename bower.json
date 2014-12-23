@@ -1,0 +1,37 @@
+{
+  "name": "blockly-tests",
+  "version": "0.0.0",
+  "authors": [
+    "Jay Bloodworth <johnabloodworth3@gmail.com>"
+  ],
+  "main": "main.js",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "blockly": "https://github.com/google/blockly.git",
+    "closure-library": "https://github.com/google/closure-library.git",
+    "JS-Interpreter": "https://github.com/NeilFraser/JS-Interpreter.git",
+    "MathJax": "~2.4.0"
+  },
+  "overrides": {
+    "blockly": {
+      "main": ["*.js", "blocks/*.js", "msg/js/en.js"]
+    },
+    "closure-library": {
+      "ignore": true
+    },
+    "JS-Interpreter": {
+      "main": "*.js"
+    },
+    "MathJax": {
+      "ignore": true
+    }
+  }
+}
