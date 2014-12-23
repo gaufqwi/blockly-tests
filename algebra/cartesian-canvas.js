@@ -7,12 +7,6 @@
     var Canvas = require('./canvas-wrapper.js');
     var PI = Math.PI;
     var atan2 = Math.atan2, sin = Math.sin, cos = Math.cos;
-    // var arrows = {
-    //     acute: {x: -5, y: -3, filled: false},
-    //     'acute-filled': {x: -5, y: -3, filled: true},
-    //     right: {x: -5, y: -5, filled: false},
-    //     'right-filled': {x: -5, y: -5, filled: true}
-    // };
     var arrows = {
         'acute': {path: [-5, -3, 0, 0, -5, 3], filled: false},
         'acute-filled': {path: [-5, -3, 0, 0, -5, 3], filled: true},
@@ -75,31 +69,6 @@
         }
         this.context.restore();
     };
-    
-    /**
-     * @param {number} x1
-     * @param {number} y1
-     * @param {number} x2
-     * @param {number} y2
-     * @param {object} options - Drawing options
-     * @return {object} The wrapper object
-     */
-    // Canvas.prototype.drawLine = function(x1, y1, x2, y2, options) {
-    //     options = options || {};
-    //     this.context.save();
-    //     this.context.beginPath();
-    //     this.setOptions(options);
-    //     this.context.moveTo(x1, y1);
-    //     this.context.lineTo(x2, y2);
-    //     this.context.stroke();
-    //     if (options.arrows) {
-    //         var angle = atan2(y2 - y1, x2 - x1);
-    //         this._drawArrowHead(x1, y1, angle + PI, options.arrows);
-    //         this._drawArrowHead(x2, y2, angle, options.arrows);
-    //     }
-    //     this.context.restore();
-    //     return this;
-    // };
 
     /**
      * @param {number} x1
@@ -158,24 +127,6 @@
         this.context.restore();
         return this;
     };
-    
-    // Cartesian.prototype._drawArrowHead = function (x, y, angle, style) {
-    //     var tx, ty;
-    //     style = arrows[style];
-    //     this.context.beginPath();
-    //     tx = style.x * cos(angle) - style.y * sin(angle);
-    //     ty = style.x * sin(angle) + style.y * cos(angle);
-    //     this.context.moveTo(x + tx, y + ty);
-    //     this.context.lineTo(x, y);
-    //     tx = style.x * cos(angle) + style.y * sin(angle);
-    //     ty = style.x * sin(angle) - style.y * cos(angle);
-    //     this.context.lineTo(x + tx, y + ty);
-    //     if (style.filled) {
-    //         this.context.closePath();
-    //         this.context.fill();
-    //     }
-    //     this.context.stroke();
-    // };
     
     Cartesian.prototype._drawArrowHead = function (x, y, angle, style) {
         style = arrows[style];
