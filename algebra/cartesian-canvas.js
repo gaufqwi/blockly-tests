@@ -6,7 +6,7 @@
 (function (module, exports) {
     var Canvas = require('./canvas-wrapper.js');
     var PI = Math.PI;
-    var atan2 = Math.atan2, sin = Math.sin, cos = Math.cos;
+    var atan2 = Math.atan2, min = Math.min, max = Math.max;
     var arrows = {
         'acute': {path: [-5, -3, 0, 0, -5, 3], filled: false},
         'acute-filled': {path: [-5, -3, 0, 0, -5, 3], filled: true},
@@ -128,6 +128,34 @@
         return this;
     };
     
+    /**
+     * @param {LinEq} eq - Linear equation to graph
+     * @param {object} options
+     */
+    Cartesian.prototype.graphLinear = function (eq, options) {
+        options = options || {};
+        options.arrows = 'acute';
+        options.lineWidth = 2;
+        var f = eq.getFunction();
+        if (!f) {
+            // Vertical line
+            var x = eq.getXintercept();
+            this.drawLine(x, this.miny, x, this.maxy, options);
+            return;
+        }
+        var finv = eq.getInverseFunction();
+        if (!finv) {
+            // Horizontal line
+            var y = f(0);
+            this.drawLine(this.minx, y, this.maxx, y, options);
+            return;
+        }
+        var topx = finv(this.maxy), botx = finv(this.miny);
+        var leftx = max(this.minx, min(topx, botx));
+        var rightx = min(this.maxx, max(topx, botx));
+        this.drawLine(leftx, f(leftx), rightx, f(rightx), options);
+    };
+    
     Cartesian.prototype._drawArrowHead = function (x, y, angle, style) {
         style = arrows[style];
         this.context.save();
@@ -142,6 +170,8 @@
         if (style.filled) {
             this.context.fill();
         }
+        //this.context.lineJoin = 'bevel';
+        this.context.miterLimit = 3;
         this.context.stroke();
         this.context.restore();
     };

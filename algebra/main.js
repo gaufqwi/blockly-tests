@@ -1,6 +1,7 @@
 require('./custom_blocks.js');
 
 var Canvas = require('./cartesian-canvas.js');
+var algebra = require('./algebra.js');
 
 Blockly.inject(document.getElementById('blocklyDiv'),
     {toolbox: document.getElementById('toolbox'),
@@ -18,7 +19,11 @@ c.attach('canvasdiv');
 // c.set('fillStyle', '#0000ff');
 // c.set('strokeStyle', '#0000ff');
 // c.drawLine(420, 200, 50, 30, {arrows: 'acute'});
-c.drawLine(1,1,8,7, {arrows: 'right-filled', color: 'green'});
-c.drawLine(8,9,-4,-5, {arrows: 'acute', color: 'red'});
+//c.drawLine(1,1,8,7, {arrows: 'right-filled', color: 'green'});
+//c.drawLine(8,9,-4,-5, {arrows: 'acute', color: 'red'});
 c.plotPoint(3,5);
 c.plotPoint(-2,-6, {color: 'green'});
+c.graphLinear(new algebra.LinEq(2,3), {color: 'red'});
+c.graphLinear(new algebra.LinEq(0,-5), {color: 'blue'});
+c.graphLinear(new algebra.LinEq(1,0,7), {color: 'green'});
+c.graphLinear(new algebra.LinEq(new algebra.Point(3,5), new algebra.Point(-2,-6)));
