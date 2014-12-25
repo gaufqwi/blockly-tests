@@ -5,6 +5,7 @@
  
 (function (module, exports) {
     var Canvas = require('./canvas-wrapper.js');
+    var U = require('./utilities.js');
     var PI = Math.PI;
     var atan2 = Math.atan2, min = Math.min, max = Math.max;
     var arrows = {
@@ -108,22 +109,55 @@
         this.context.translate(-this.minx, -this.maxy);
     };
     
+    
+    var plotPointDefaults = {
+        shape: 'circle',
+        radius: 3,
+        fill: true,
+        stroke: false,
+        color: 'black'
+    }
     /**
      * @param {number} x
      * @param {number} y
      * @param {object} options - Drawing options
      */
     Cartesian.prototype.plotPoint = function (x, y, options) {
-        options = options || {};
-        var radius = options.radius || 3;
+        U.merge(options, plotPointDefaults);
+        //var radius = options.radius || 3;
+        //var shape = options.shape || 'circle'
         this.context.save();
         this.setOptions(options);
         this._transform();
         this.context.beginPath();
         this.context.translate(x, y);
         this.context.scale(1/this.dx, 1/this.dy);
-        this.context.arc(0, 0, radius, 0, 2*PI);
-        this.context.fill();
+        switch (options.shape) {
+            case 'circle':
+                this.context.arc(0, 0, options.radius, 0, 2*PI);
+                break;
+            case 'square':
+                this.context.moveTo(options.radius, options.radius);
+                this.context.lineTo(-options.radius, options.radius);
+                this.context.lineTo(-options.radius, -options.radius);
+                this.context.lineTo(options.radius, -options.radius);
+                this.context.closePath();
+                break;
+            case 'x':
+                this.context.moveTo(options.radius, options.radius);
+                this.context.lineTo(-options.radius, -options.radius);
+                this.context.moveTo(-options.radius, options.radius);
+                this.context.lineTo(options.radius, -options.radius);
+                options.stroke = true;
+                options.fill = false;
+                break;
+        }
+        if (options.fill) {
+            this.context.fill();
+        }
+        if (options.stroke) {
+            this.context.stroke();
+        }
         this.context.restore();
         return this;
     };

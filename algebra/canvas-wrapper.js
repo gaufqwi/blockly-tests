@@ -57,16 +57,22 @@
          this.context.restore();
      };
      
+     
+     // FIXME: add lesser used options
+     var contextProps = {fillStyle: true, strokeStyle: true, lineWidth: true,
+        globalAlpha: true, lineCap: true, lineJoin: true, miterLimit: true};
+        
      /**
       * @param {object} options - Options to set
       */
      Canvas.prototype.setOptions = function (options) {
+         if ('color' in options) {
+             this.context.fillStyle = options.color;
+             this.context.strokeStyle = options.color;
+         }
          for (var o in options) {
-             if (o in this.context) {
+             if (o in contextProps) {
                  this.context[o] = options[o];
-             } else if (o === 'color') {
-                 this.context.fillStyle = options[o];
-                 this.context.strokeStyle = options[o];
              }
              // TODO: More special cases?
          }

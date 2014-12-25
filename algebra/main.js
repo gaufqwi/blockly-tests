@@ -1,7 +1,8 @@
-require('./custom_blocks.js');
+require('./graphing_blocks.js');
 
 var Canvas = require('./cartesian-canvas.js');
 var algebra = require('./algebra.js');
+var graphing = require('./graphing.js');
 
 Blockly.inject(document.getElementById('blocklyDiv'),
     {toolbox: document.getElementById('toolbox'),
@@ -10,6 +11,7 @@ Blockly.inject(document.getElementById('blocklyDiv'),
 
 var c = new Canvas('newcanvas', {width: 200, height: 200})
 c.attach('canvasdiv');
+
 //c.clear();
 //c.drawLine(10,20, 200, 450);
 //c.fillRect(50, 50, 300, 300);
@@ -21,9 +23,18 @@ c.attach('canvasdiv');
 // c.drawLine(420, 200, 50, 30, {arrows: 'acute'});
 //c.drawLine(1,1,8,7, {arrows: 'right-filled', color: 'green'});
 //c.drawLine(8,9,-4,-5, {arrows: 'acute', color: 'red'});
-c.plotPoint(3,5);
-c.plotPoint(-2,-6, {color: 'green'});
-c.graphLinear(new algebra.LinEq(2,3), {color: 'red'});
-c.graphLinear(new algebra.LinEq(0,-5), {color: 'blue'});
-c.graphLinear(new algebra.LinEq(1,0,7), {color: 'green'});
-c.graphLinear(new algebra.LinEq(new algebra.Point(3,5), new algebra.Point(-2,-6)));
+// c.plotPoint(3,5);
+// c.plotPoint(-2,-6, {color: 'green'});
+// c.graphLinear(new algebra.LinEq(2,3), {color: 'red'});
+// c.graphLinear(new algebra.LinEq(0,-5), {color: 'blue'});
+// c.graphLinear(new algebra.LinEq(1,0,7), {color: 'green'});
+// c.graphLinear(new algebra.LinEq(new algebra.Point(3,5), new algebra.Point(-2,-6)));
+
+// // Testing hack
+// function myUpdateFunction() {
+//   var code = Blockly.JavaScript.workspaceToCode();
+//   document.getElementById('textarea').value = code;
+// }
+// Blockly.addChangeListener(myUpdateFunction);
+
+graphing.start(c);
