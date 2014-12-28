@@ -118,11 +118,10 @@
         color: 'black'
     }
     /**
-     * @param {number} x
-     * @param {number} y
+     * @param {Point} p
      * @param {object} options - Drawing options
      */
-    Cartesian.prototype.plotPoint = function (x, y, options) {
+    Cartesian.prototype.plotPoint = function (p, options) {
         U.merge(options, plotPointDefaults);
         //var radius = options.radius || 3;
         //var shape = options.shape || 'circle'
@@ -130,7 +129,7 @@
         this.setOptions(options);
         this._transform();
         this.context.beginPath();
-        this.context.translate(x, y);
+        this.context.translate(p.x.toDecimal(), p.y.toDecimal());
         this.context.scale(1/this.dx, 1/this.dy);
         switch (options.shape) {
             case 'circle':
