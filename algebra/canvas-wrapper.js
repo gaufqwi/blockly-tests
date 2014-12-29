@@ -4,6 +4,13 @@
  */
 
 (function (module, exports) {
+    var U = require('./utilities.js');
+    
+    var canvasDefaults = {
+        width: 800,
+        height: 600,
+        background: 'white'
+    }
 
     /**
      * @constructor
@@ -12,24 +19,21 @@
      * @return {object} The wrapper object
      */
     var Canvas = function (id, options) {
-        options = options || {};
+        U.merge(options, canvasDefaults);
         this.canvas = document.createElement('canvas');
         this.context = this.canvas.getContext('2d');
         this.canvas.id = id;
-        //this.canvas.width = options.width || 800;
-        //this.canvas.height = options.height || 600;
-        this.resize(options.width || 800, options.height || 600);
-        this.background = options.background || '#ffffff';
+        this.resize(options);
+        this.background = options.background;
         return this;
     };
     
     /**
-     * @param {number} w - Width of canvas
-     * @param {number} h - Height of canvas
+     * @param {object} options - Options
      */
-    Canvas.prototype.resize = function (w, h) {
-        this.canvas.width = w;
-        this.canvas.height = h;
+    Canvas.prototype.resize = function (options) {
+        this.canvas.width = options.width;
+        this.canvas.height = options.height;
     };
  
     /**
@@ -42,7 +46,7 @@
         }
         this.parent = element;
         element.appendChild(this.canvas);
-        this.resize(element.clientWidth, element.clientHeight);
+        this.resize({width: element.clientWidth, height: element.clientHeight});
         this.clear();
         return this;
     };

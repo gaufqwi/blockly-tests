@@ -8,6 +8,7 @@
     var U = require('./utilities.js');
     var PI = Math.PI;
     var atan2 = Math.atan2, min = Math.min, max = Math.max;
+    var floor = Math.floor, ceil = Math.ceil;
     var arrows = {
         'acute': {path: [-5, -3, 0, 0, -5, 3], filled: false},
         'acute-filled': {path: [-5, -3, 0, 0, -5, 3], filled: true},
@@ -15,14 +16,23 @@
         'right-filled': {path: [-5, -5, 0, 0, -5, 5], filled: true}
     };
     
+    var cartesianDefaults = {
+        minx: -10,
+        miny: -10,
+        maxx: 10,
+        maxy: 10,
+        square: true,
+        expand: true,
+        padding: 3
+    };
+    
+    /**
+     * @param {string} id - id to assign to canvas element
+     * @param {object} options - Options
+     * @constructor
+     */
     var Cartesian = function (id, options) {
-        options = options || {};
-        this.minx = (typeof options.minx !== 'undefined' ? options.minx : -10);
-        this.miny = (typeof options.miny !== 'undefined' ? options.miny : -10);
-        this.maxx = (typeof options.maxx !== 'undefined' ? options.maxx : 10);
-        this.maxy = (typeof options.maxy !== 'undefined' ? options.maxy : 10);
-        this.xpadding = options.xpadding || options.padding || 5;
-        this.ypadding = options.ypadding || options.padding || 5;
+        U.merge(options, cartesianDefaults);
         Canvas.call(this, id, options);
     };
     Cartesian.prototype = Object.create(Canvas.prototype);
@@ -31,11 +41,61 @@
      * @param {number} w - Width of canvas
      * @param {number} h - Height of canvas
      */
-    Cartesian.prototype.resize = function (w, h) {
-        Canvas.prototype.resize.call(this, w, h);
-        this.dx = (w - 2*this.xpadding) / (this.maxx - this.minx);
-        this.dy = (h - 2*this.ypadding) / (this.maxy - this.miny);
-        this.ds = Math.max(this.dx, this.dy);
+    Cartesian.prototype.resize = function (options) {
+        Canvas.prototype.resize.call(this, options);
+        var square = options.square || this.square;
+        var expand = options.expand || this.expand;
+        var xpadding = options.padding || this.padding;
+        var ypadding = options.padding || this.padding;
+        var eW = options.width - 2*xpadding;
+        var eH = options.height - 2*ypadding;
+        console.log('E', eW, eH, xpadding, ypadding);
+        var minx = options.minx || this.minx;
+        var miny = options.miny || this.miny;
+        var maxx = options.maxx || this.maxx;
+        var maxy = options.maxy || this.maxy;
+        var dx = eW / (maxx - minx);
+        var dy = eH / (maxy - miny);
+        if (square && dx !== dy) {
+            if (dx < dy) {
+                // Shrink vertical scale - pad with space or extra rows
+                dy = dx;
+                var oldUnits = maxy - miny;
+                if (expand) {
+                    var units = floor((eH / dy));
+                    miny -= floor((units - oldUnits)/2);
+                    maxy += ceil((units - oldUnits)/2);
+                } else {
+                    ypadding += (eH - oldUnits*dy)/2;
+                }
+                //ypadding += (eH - units*dy)/2;
+            } else {
+                // Shrink horizontal scale - pad with space or extra cols
+                dx = dy;
+                oldUnits = maxx - minx;
+                if (expand) {
+                    units = floor((eW / dx));
+                    minx -= floor((units - oldUnits)/2);
+                    maxx += ceil((units - oldUnits)/2);
+                } else {
+                    xpadding += (eW - units*dx)/2;
+                }
+            }
+        }
+        this.minx = minx;
+        this.miny = miny;
+        this.maxx = maxx;
+        this.maxy = maxy;
+        this.dx = dx;
+        this.dy = dy;
+        this.ds = min(dx, dy);
+        this.padding = this.padding || options.padding;
+        this.xpadding = xpadding;
+        this.ypadding = ypadding;
+        this.square = square;
+        this.expand = expand;
+        console.log(minx, maxx, miny, maxy);
+        console.log('PAD', xpadding, ypadding);
     };
 
     /**
@@ -65,7 +125,7 @@
                 this.drawLine(this.minx, i, this.maxx, i,
                     {globalAlpha: 1, lineWidth: 3, arrows: 'acute-filled'});
             } else {
-                this.drawLine(this.minx, i, this.maxy, i);
+                this.drawLine(this.minx, i, this.maxx, i);
             }
         }
         this.context.restore();
@@ -193,8 +253,8 @@
         style = arrows[style];
         this.context.save();
         this.context.translate(x, y);
-        this.context.scale(1/this.dx, 1/this.dy);
         this.context.rotate(angle);
+        this.context.scale(1/this.dx, 1/this.dy);
         this.context.beginPath();
         this.context.moveTo(style.path[0], style.path[1]);
         for (var i=2, l = style.path.length; i<l; i += 2) {
