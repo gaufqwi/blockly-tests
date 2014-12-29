@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <link href="grapher.css" rel="stylesheet" type="text/css">
+        <title>Linear Equation Grapher</title>
+    </head>
+    <body>
+        
+    <div id="grapher-main">
+    <div id="blocklydiv" class="grapher-workspace"></div>
+    <div id="canvasdiv" class="grapher-grid"></div>
+    </div>
+
+    
+<xml id="toolbox" style="display: none">
+  <block type="grapher_si_equation"></block>
+  <block type="grapher_std_equation"></block>
+  <block type="grapher_ps_equation"></block>
+  <block type="grapher_table"></block>
+  <block type="grapher_graph"></block>
+  <block type="grapher_number"></block>
+  <block type="grapher_pair"></block>
+</xml>
+
+    <script src="js/vendor/blockly/blockly_compressed.js"></script>
+    <script src="js/vendor/blockly/javascript_compressed.js"></script>
+    <script src="js/vendor/blockly/msg/js/en.js"></script>
+    <script src="js/main.js"></script>
+    </body>
+</html>
