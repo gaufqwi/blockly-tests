@@ -49,7 +49,6 @@
         var ypadding = options.padding || this.padding;
         var eW = options.width - 2*xpadding;
         var eH = options.height - 2*ypadding;
-        console.log('E', eW, eH, xpadding, ypadding);
         var minx = options.minx || this.minx;
         var miny = options.miny || this.miny;
         var maxx = options.maxx || this.maxx;
@@ -94,8 +93,6 @@
         this.ypadding = ypadding;
         this.square = square;
         this.expand = expand;
-        console.log(minx, maxx, miny, maxy);
-        console.log('PAD', xpadding, ypadding);
     };
 
     /**

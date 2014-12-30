@@ -1,0 +1,46 @@
+@charset "utf-8";
+
+#grapher-main {
+    width: 95%;
+    margin: 4px auto;
+    padding: 0;
+    border: 0;
+}
+
+.grapher-workspace {
+    float: left;
+}
+
+.grapher-grid {
+    float: right;
+}
+
+.small .grapher-workspace {
+    width: 450px;
+    height: 580px;
+}
+
+.small .grapher-grid {
+    width: 300px;
+    height: 300px;
+}
+
+.med .grapher-workspace {
+    width: 500px;
+    height: 450px;
+}
+
+.med .grapher-grid {
+    width: 450px;
+    height: 450px;
+}
+
+.large .grapher-workspace {
+    width: 600px;
+    height: 600px;
+}
+
+.large .grapher-grid {
+    width: 600px;
+    height: 400px;
+}

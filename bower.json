@@ -18,11 +18,16 @@
     "blockly": "https://github.com/google/blockly.git",
     "closure-library": "https://github.com/google/closure-library.git",
     "JS-Interpreter": "https://github.com/NeilFraser/JS-Interpreter.git",
-    "MathJax": "~2.4.0"
+    "MathJax": "~2.4.0",
+    "phaser": "~2.2.1"
   },
   "overrides": {
     "blockly": {
-      "main": ["*.js", "blocks/*.js", "msg/js/en.js"]
+      "main": [
+        "*.js",
+        "blocks/*.js",
+        "msg/js/en.js"
+      ]
     },
     "closure-library": {
       "ignore": true
