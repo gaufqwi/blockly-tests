@@ -10,8 +10,8 @@
     //console.log('GI', Phaser, Interpreter);
     
     window.onload = function () {
-
-        game.init(function () {
+        
+        var initBlockly = function () {
             interpreter.init(game);
             Blockly.inject(document.getElementById('blockly-inner'),
                 {toolbox: document.getElementById('toolbox')});
@@ -31,7 +31,9 @@
                 var code = Blockly.JavaScript.blockToCode(blocks[0]);
                 interpreter.start(code);
             };
-        });
+        };
+
+        game.init(initBlockly, interpreter.resume);
         
         // var testFun = function () {
     //         console.log('TestFun Go!!!')

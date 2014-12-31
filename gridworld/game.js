@@ -9,7 +9,8 @@
     var boardY = 12;
     var walkTime = 1200;
 
-    var secondStage;
+    var initFunc;
+    var nextStepFunc;
     var game;
     var player;
     var map;
@@ -47,7 +48,7 @@
             player.animations.add('stand_w', [9], 1, true);
             player.animations.play('stand_s');
             
-            secondStage();
+            initFunc();
             
         },
         
@@ -89,12 +90,13 @@
             tileSize, tileSize, 'Ground');
         if (!dest || (dest.properties.blocker === 'true')) {
             // Obstacle; walk in place
-            exports.busy = true;
+            //exports.busy = true;
             player.animations.play('walk_' + dir);
             var timer = game.time.create(true);
             timer.add(walkTime, function () {
-                exports.busy = false;
+                //exports.busy = false;
                 player.animations.play('stand_' + dir);
+                nextStepFunc();
             });
             timer.start();
             return false;
@@ -102,18 +104,20 @@
         // Nothing in the way; go ahead
         var tween = game.add.tween(player);
         tween.to(tweenProps, walkTime);
-        exports.busy = true;
+        //exports.busy = true;
         player.animations.play('walk_' + dir);
         tween.onComplete.add(function () {
-            exports.busy = false;
+            //exports.busy = false;
             player.animations.play('stand_' + dir);
+            nextStepFunc();
         }, this);
         tween.start();
         return true;
-    }
+    };
     
-    exports.init = function (cb) {
-        secondStage = cb;
+    exports.init = function (init_func, nextstep_func) {
+        initFunc = init_func;
+        nextStepFunc = nextstep_func;
         exports.busy = false;
         game = new Phaser.Game(boardX*tileSize, boardY*tileSize,
             Phaser.AUTO, 'grid-container', gameState);

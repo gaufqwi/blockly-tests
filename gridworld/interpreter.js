@@ -3,34 +3,41 @@
  */
  
 (function (module, exports, Interpreter) {
+    var defaultWait = 10;
+    
     var goFlag;
+    var waitFlag;
     var game;
-    var stepCount;
     var collisionHandler;
     var goalHandler;
+    var activeTerp;
  
     var baseCode = 
         "function walkNorth() {\n" +
         "var t = walk('n');\n" +
-        "while (isBusy()) ;\n" +
+        //"while (isBusy()) ;\n" +
+        "wait();\n" +
         "if (!t) reportCollision();\n" +
         "else if (atGoal()) reportGoal();\n" +
         "}\n" +
         "function walkSouth() {\n" +
         "var t = walk('s');\n" +
-        "while (isBusy()) ;\n" +
+        //"while (isBusy()) ;\n" +
+        "wait();\n" +
         "if (!t) reportCollision();\n" +
         "else if (atGoal()) reportGoal();\n" +
         "}\n" +
         "function walkEast() {\n" +
         "var t = walk('e');\n" +
-        "while (isBusy()) ;\n" +
+        //"while (isBusy()) ;\n" +
+        "wait();\n" +
         "if (!t) reportCollision();\n" +
         "else if (atGoal()) reportGoal();\n" +
         "}\n" +
         "function walkWest() {\n" +
         "var t = walk('w');\n" +
-        "while (isBusy()) ;\n" +
+        //"while (isBusy()) ;\n" +
+        "wait();\n" +
         "if (!t) reportCollision();\n" +
         "else if (atGoal()) reportGoal();\n" +
         "}\n";
@@ -65,6 +72,12 @@
         };
         terp.setProperty(scope, 'reportGoal',
             terp.createNativeFunction(wrapper));
+        wrapper = function () {
+            console.log('waiting');
+            waitFlag = true;
+        };
+        terp.setProperty(scope, 'wait',
+            terp.createNativeFunction(wrapper));
     };
  
 exports.init = function (g) {
@@ -79,20 +92,25 @@ exports.setCollisionHandler = function (h) {
 exports.setGoalHandler = function (h) {
     goalHandler = h;
 };
+
+
+var step = function () {
+    waitFlag = false;
+    if (goFlag && activeTerp.step() && !waitFlag) {
+        setTimeout(step, defaultWait);
+    }
+};
  
 exports.start = function (code) {
     console.log('starting');
     goFlag = true;
-    stepCount = 0;
-    var terp = new Interpreter(baseCode + code, initEnv);
-    var step = function () {
-        //console.log('step', stepCount)
-        if (goFlag && terp.step()) {
-            setTimeout(step, 0);
-            //stepCount++;
-        }
-    };
-    step();
+    activeTerp = new Interpreter(baseCode + code, initEnv);
+    setTimeout(step ,0);
+};
+
+exports.resume = function () {
+    console.log('resuming');
+    setTimeout(step, 0);
 };
  
 exports.stop = function () {
