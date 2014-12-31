@@ -2,26 +2,33 @@
 <html>
     <head>
         <meta charset='utf-8'>
-        <link href="algebra.css" rel="stylesheet" type="text/css">
+        <link href="gridworld.css" rel="stylesheet" type="text/css">
         <title>GridWorld</title>
     </head>
     <body>
         
+        
+    <div id="blockly-outer">
+        <div id="blockly-inner"></div>
+        <button id="gobutton">Go</button>
+    </div>
     <div id="game-container"></div>
     
-<!--<xml id="toolbox" style="display: none">-->
-<!--  <block type="grapher_si_equation"></block>-->
-<!--  <block type="grapher_std_equation"></block>-->
-<!--  <block type="grapher_ps_equation"></block>-->
-<!--  <block type="grapher_table"></block>-->
-<!--  <block type="grapher_graph"></block>-->
-<!--  <block type="grapher_number"></block>-->
-<!--  <block type="grapher_pair"></block>-->
-<!--</xml>-->
+<xml id="toolbox" style="display: none">
+  <block type="gridworld_gonorth"></block>
+  <block type="gridworld_gosouth"></block>
+  <block type="gridworld_goeast"></block>
+  <block type="gridworld_gowest"></block>
+</xml>
 
-    <!--<script src="js/vendor/blockly/blockly_compressed.js"></script>-->
-    <!--<script src="js/vendor/blockly/javascript_compressed.js"></script>-->
-    <!--<script src="js/vendor/blockly/msg/js/en.js"></script>-->
+<xml id="startblock" style="display: none">
+    <block type="gridworld_start" deletable="false" x="100" y="10"></block>
+</xml>
+
+
+    <script src="js/vendor/blockly/blockly_compressed.js"></script>
+    <script src="js/vendor/blockly/javascript_compressed.js"></script>
+    <script src="js/vendor/blockly/msg/js/en.js"></script>
     <script src="js/vendor/phaser/phaser.js"></script>
     <script src="js/vendor/JS-Interpreter/acorn.js"></script>
     <script src="js/vendor/JS-Interpreter/interpreter.js"></script>

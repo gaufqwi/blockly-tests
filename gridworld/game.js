@@ -58,28 +58,8 @@
         var tile = map.getTileWorldXY(player.x, player.y);
         return !!tile && (tile.properties.goal === 'true');
     };
-    
-    // exports.canGo = function (dir) {
-    //     switch (dir) {
-    //         case 'n':
-    //             var dest = map.getTileWorldXY(player.x, player.y-tileSize);
-    //             break;
-    //         case 's':
-    //             dest = map.getTileWorldXY(player.x, player.y+tileSize);
-    //             break;
-    //         case 'e':
-    //             dest = map.getTileWorldXY(player.x+tileSize, player.y);
-    //             break;
-    //         case 'w':
-    //             dest = map.getTileWorldXY(player.x-tileSize, player.y);
-    //             break;
-    //     }
-    //     console.log('CG', dest, (!!dest && !dest.properties.blocker));
-    //     return !!dest && (dest.properties.blocker !== 'true');
-    // };
-    
+
     exports.walk = function (dir) {
-        console.log('walk real', dir);
         switch (dir) {
             case 'n':
                 var dX = 0;

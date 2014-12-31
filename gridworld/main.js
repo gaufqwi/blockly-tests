@@ -2,22 +2,35 @@
  * @file Main entry point for GridWorld app
  * @author Jay Bloodworth <johnabloodworth3@gmail.com>
  */
-(function (module, exports) {
+(function (module, exports, Blockly) {
+    var blocks = require('./game-blocks.js');
     var game = require('./game.js');
     var interpreter = require('./interpreter.js');
     
     //console.log('GI', Phaser, Interpreter);
     
     window.onload = function () {
-        // Do Blockly stuff
-        
+
         game.init(function () {
             interpreter.init(game);
-            var code = "walkEast();walkEast();walkEast();walkSouth();walkSouth()";
-            interpreter.setCollisionHandler(function () {
-                console.log('bump');
-            });
-            interpreter.start(code);
+            Blockly.inject(document.getElementById('blockly-inner'),
+                {toolbox: document.getElementById('toolbox')});
+            //console.log('>>',document.getElementById('startblock').childNodes);
+            Blockly.Xml.domToWorkspace(Blockly.mainWorkspace,
+                document.getElementById('startblock'));
+
+            document.getElementById('gobutton').onclick = function () {
+                var blocks = Blockly.mainWorkspace.getTopBlocks();
+                if (blocks.length === 0) {
+                    // No code - Appropriate error
+                    console.log('no code');
+                } else if (blocks.length > 1) {
+                    // Stray blocks - appropriate error
+                    console.log('strays');
+                }
+                var code = Blockly.JavaScript.blockToCode(blocks[0]);
+                interpreter.start(code);
+            };
         });
         
         // var testFun = function () {
@@ -71,4 +84,4 @@
     
     };
     
-})(module, exports);
+})(module, exports, Blockly);
