@@ -4,10 +4,10 @@
  */
  
 (function (module, exports, Phaser) {
-    var tileSize = 40;
-    var boardX = 15;
-    var boardY = 15;
-    var walkTime = 1500;
+    var tileSize = 48;
+    var boardX = 12;
+    var boardY = 12;
+    var walkTime = 1200;
 
     var secondStage;
     var game;
@@ -22,6 +22,7 @@
             game.load.tilemap('map', 'assets/gridworld/level1.json', null,
                 Phaser.Tilemap.TILED_JSON);
             game.load.image('tiles', 'assets/gridworld/tileset.png');
+            game.load.image('features', 'assets/gridworld/features.png');
         },
         
         create: function () {
@@ -29,12 +30,13 @@
             map = game.add.tilemap('map');
             
             map.addTilesetImage('Ground', 'tiles');
+            map.addTilesetImage('Features', 'features');
             
-            var layer = map.createLayer('Ground');
+            var ground = map.createLayer('Ground');
+            ground.resizeWorld();
+            map.createLayer('Features');
             
-            layer.resizeWorld();
-            
-            player = game.add.sprite(40, 40, 'player');
+            player = game.add.sprite(2, 2, 'player');
             player.animations.add('walk_s', [0,1,2], 6, true);
             player.animations.add('walk_e', [3,4,5], 6, true);
             player.animations.add('walk_n', [6,7,8], 6, true);
