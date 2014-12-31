@@ -2,7 +2,7 @@
  * @file Interface to JS-Interpreter
  */
  
-(function (module, exports, Interpreter) {
+(function (module, exports, Interpreter, Blockly) {
     var defaultWait = 10;
     
     var goFlag;
@@ -73,11 +73,16 @@
         terp.setProperty(scope, 'reportGoal',
             terp.createNativeFunction(wrapper));
         wrapper = function () {
-            console.log('waiting');
             waitFlag = true;
         };
         terp.setProperty(scope, 'wait',
             terp.createNativeFunction(wrapper));
+      wrapper = function(id) {
+        id = id ? id.toString() : '';
+        Blockly.mainWorkspace.highlightBlock(id);
+      };
+      terp.setProperty(scope, 'highlightBlock',
+          terp.createNativeFunction(wrapper));
     };
  
 exports.init = function (g) {
@@ -102,14 +107,12 @@ var step = function () {
 };
  
 exports.start = function (code) {
-    console.log('starting');
     goFlag = true;
     activeTerp = new Interpreter(baseCode + code, initEnv);
     setTimeout(step ,0);
 };
 
 exports.resume = function () {
-    console.log('resuming');
     setTimeout(step, 0);
 };
  
@@ -117,4 +120,4 @@ exports.stop = function () {
     goFlag = false;
 };
  
-})(module, exports, Interpreter);
+})(module, exports, Interpreter, Blockly);

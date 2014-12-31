@@ -5,6 +5,9 @@
 
 (function (module, exports, Blockly) {
     
+    Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
+    Blockly.JavaScript.addReservedWords('highlightBlock');
+    
     Blockly.Blocks['gridworld_gonorth'] = {
         init: function () {
             this.setColour(320);
@@ -73,6 +76,8 @@
             this.setTooltip('Attach blocks here');
             this.setNextStatement(true);
             this.setPreviousStatement(false);
+            this.setDeletable(false);
+            this.setMovable(false);
         }
     };
 

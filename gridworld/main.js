@@ -20,6 +20,8 @@
                 document.getElementById('startblock'));
 
             document.getElementById('gobutton').onclick = function () {
+                Blockly.mainWorkspace.traceOn(true);
+                Blockly.mainWorkspace.highlightBlock(null);
                 var blocks = Blockly.mainWorkspace.getTopBlocks();
                 if (blocks.length === 0) {
                     // No code - Appropriate error
