@@ -9,29 +9,38 @@
     var boardY = 12;
     var walkTime = 1200;
 
+    var theme = 'zombie';
+    var baseUrl = 'assets/gridworld/';
+    var config;
     var initFunc;
     var nextStepFunc;
     var game;
     var player;
     var map;
+    var ground;
+    var features;
+    var facing;
 
     var bootState = Object.create(Phaser.State.prototype);
     
     bootState.preload = function () {
         console.log('boot preload');
         game.load.spritesheet('progbar',
-            'assets/gridworld/progbar-ss.png', 400, 50);
+            baseUrl + 'progbar-ss.png', 400, 50);
+        game.load.json('config', baseUrl + 'config-' + theme + '.json');
     };
     
     bootState.create = function () {
         console.log('boot create');
+        config = game.cache.getJSON('config');
+        console.log(config);
         game.state.start('preload');
     };
 
     var preloadState = Object.create(Phaser.State.prototype);
     
     preloadState.preload = function () {
-        console.log('preload preload', game.cache);
+        console.log('preload preload');
         // Set up loading display
         var progbar = game.add.sprite(
             game.world.centerX-200, game.world.centerY, 'progbar');
@@ -52,11 +61,17 @@
         
         // Load assets
         game.load.spritesheet('player',
-            'assets/gridworld/purple-zombie-ss.png', 40, 40);
-        game.load.tilemap('map', 'assets/gridworld/level1.json', null,
-            Phaser.Tilemap.TILED_JSON);
-        game.load.image('tiles', 'assets/gridworld/tileset.png');
-        game.load.image('features', 'assets/gridworld/features.png');
+            baseUrl + config.url_prefix + config.player.spritesheet,
+            config.player.width, config.player.height);
+        game.load.image('tiles',
+            baseUrl + config.url_prefix + config.tilesets.main);
+        game.load.image('features',
+            baseUrl + config.url_prefix + config.tilesets.features);
+        for (var i=0, l = config.levels.length; i<l; i++) {
+            game.load.tilemap('level' + i,
+                baseUrl + config.url_prefix + config.levels[i].map,
+                null, Phaser.Tilemap.TILED_JSON);
+        }
     };
 
     preloadState.create = function () {
@@ -68,81 +83,22 @@
     
     playState.create = function () {
         console.log('play create');
-        map = game.add.tilemap('map');
+
+        player = game.add.sprite(0, 0, 'player');
         
-        map.addTilesetImage('Ground', 'tiles');
-        map.addTilesetImage('Features', 'features');
-        
-        var ground = map.createLayer('Ground');
-        ground.resizeWorld();
-        map.createLayer('Features');
-        
-        player = game.add.sprite(2, 2, 'player');
-        player.animations.add('walk_s', [0,1,2], 6, true);
-        player.animations.add('walk_e', [3,4,5], 6, true);
-        player.animations.add('walk_n', [6,7,8], 6, true);
-        player.animations.add('walk_w', [9,10,11], 6, true);
-        player.animations.add('stand_s', [0], 1, true);
-        player.animations.add('stand_e', [3], 1, true);
-        player.animations.add('stand_n', [6], 1, true);
-        player.animations.add('stand_w', [9], 1, true);
-        player.animations.play('stand_s');
+        var animations = ['walk_s', 'stand_s', 'walk_e', 'stand_e', 'walk_n',
+            'stand_n', 'walk_w', 'stand_w'];
+        for (var i=0, l=animations.length; i<l; i++) {
+            var a = animations[i];
+            player.animations.add(a, config.player.animations[a].frames,
+            config.player.animations[a].fps, true);
+        }
+
+        setLevel(0);
         
         initFunc();
     };
-    
-    // exports.init = function (game) {
-    //     game.state.add('boot', bootState);
-    //     game.state.add('preload', preloadState);
-    //     game.state.add('play', playState);
-    // }
 
-    
-    // var gameState = {
-    //     preload: function () {
-    //         game.load.spritesheet('player',
-    //             'assets/gridworld/purple-zombie-ss.png', 40, 40);
-    //         game.load.tilemap('map', 'assets/gridworld/level1.json', null,
-    //             Phaser.Tilemap.TILED_JSON);
-    //         game.load.image('tiles', 'assets/gridworld/tileset.png');
-    //         game.load.image('features', 'assets/gridworld/features.png');
-    //     },
-        
-    //     create: function () {
-    //         map = game.add.tilemap('map');
-            
-    //         map.addTilesetImage('Ground', 'tiles');
-    //         map.addTilesetImage('Features', 'features');
-            
-    //         var ground = map.createLayer('Ground');
-    //         ground.resizeWorld();
-    //         map.createLayer('Features');
-            
-    //         player = game.add.sprite(2, 2, 'player');
-    //         player.animations.add('walk_s', [0,1,2], 6, true);
-    //         player.animations.add('walk_e', [3,4,5], 6, true);
-    //         player.animations.add('walk_n', [6,7,8], 6, true);
-    //         player.animations.add('walk_w', [9,10,11], 6, true);
-    //         player.animations.add('stand_s', [0], 1, true);
-    //         player.animations.add('stand_e', [3], 1, true);
-    //         player.animations.add('stand_n', [6], 1, true);
-    //         player.animations.add('stand_w', [9], 1, true);
-    //         player.animations.play('stand_s');
-            
-    //         initFunc();
-            
-    //     },
-        
-    //     update: function () {
-    //         //console.log('Update Loop', exports.busy);
-    //     }
-    // };
-    
-    // exports.atGoal = function () {
-    //     var tile = map.getTileWorldXY(player.x, player.y);
-    //     return !!tile && (tile.properties.goal === 'true');
-    // };
-    
     exports.getFeatureProperties = function () {
         var tile = map.getTileWorldXY(player.x, player.y, tileSize, tileSize,
             'Features');
@@ -180,7 +136,7 @@
             //exports.busy = true;
             player.animations.play('walk_' + dir);
             var timer = game.time.create(true);
-            timer.add(walkTime, function () {
+            timer.add(confif.player.speed, function () {
                 //exports.busy = false;
                 player.animations.play('stand_' + dir);
                 nextStepFunc();
@@ -190,7 +146,7 @@
         }
         // Nothing in the way; go ahead
         var tween = game.add.tween(player);
-        tween.to(tweenProps, walkTime);
+        tween.to(tweenProps, config.player.speed);
         //exports.busy = true;
         player.animations.play('walk_' + dir);
         tween.onComplete.add(function () {
@@ -216,6 +172,26 @@
         return game;
     };
 
-    //exports.busy = false;
+    var setLevel = function (n) {
+        var level = config.levels[n];
+        
+        if (map) {
+            map.destroy();
+            ground.destroy();
+            features.destroy();
+        }
+        
+        map = game.add.tilemap('level' + n);
+        map.addTilesetImage('Ground', 'tiles');
+        map.addTilesetImage('Features', 'features');
+        ground = map.createLayer('Ground');
+        features = map.createLayer('Features');
+        
+        facing = level.facing;
+        player.x = config.player.offset_x + tileSize*level.start_x;
+        player.y = config.player.offset_y + tileSize*level.start_y;
+        player.animations.play('stand_' + facing);
+        player.bringToTop();
+    };
     
 })(module, exports, Phaser);
