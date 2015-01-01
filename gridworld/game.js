@@ -14,12 +14,13 @@
     var game;
     var player;
     var map;
-    
+
     var bootState = Object.create(Phaser.State.prototype);
     
     bootState.preload = function () {
         console.log('boot preload');
-        // Get progress bar
+        game.load.spritesheet('progbar',
+            'assets/gridworld/progbar-ss.png', 400, 50);
     };
     
     bootState.create = function () {
@@ -30,7 +31,26 @@
     var preloadState = Object.create(Phaser.State.prototype);
     
     preloadState.preload = function () {
-        console.log('preload preload');
+        console.log('preload preload', game.cache);
+        // Set up loading display
+        var progbar = game.add.sprite(
+            game.world.centerX-200, game.world.centerY, 'progbar');
+        progbar.anchor.setTo(0, 0.5);
+        progbar.animations.add('spin', [0,1,2,3], 12, true);
+        progbar.animations.play('spin');
+        game.load.setPreloadSprite(progbar, 0);
+        var loadtext = game.add.text(
+            game.world.centerX, game.world.centerY - 30, 'Loading....',
+            {font: '36px Arial', fill: 'white'});
+        loadtext.anchor.setTo(0.5, 1);
+        var progtext = game.add.text(game.world.centerX, game.world.centerY, '0%',
+            {font: '36px Arial', fill: 'white'});
+        progtext.anchor.setTo(0.5, 0.5);
+        game.load.onFileComplete.add(function (progress) {
+            progtext.setText(progress + '%');
+        }, this);
+        
+        // Load assets
         game.load.spritesheet('player',
             'assets/gridworld/purple-zombie-ss.png', 40, 40);
         game.load.tilemap('map', 'assets/gridworld/level1.json', null,
@@ -38,7 +58,7 @@
         game.load.image('tiles', 'assets/gridworld/tileset.png');
         game.load.image('features', 'assets/gridworld/features.png');
     };
-    
+
     preloadState.create = function () {
         console.log('preload create');
         game.state.start('play');
