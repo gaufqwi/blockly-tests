@@ -9,7 +9,7 @@
     var waitFlag;
     var game;
     var collisionHandler;
-    var goalHandler;
+    var featureHandler;
     var activeTerp;
  
     var baseCode = 
@@ -18,28 +18,28 @@
         //"while (isBusy()) ;\n" +
         "wait();\n" +
         "if (!t) reportCollision();\n" +
-        "else if (atGoal()) reportGoal();\n" +
+        "else reportFeatures();\n" +
         "}\n" +
         "function walkSouth() {\n" +
         "var t = walk('s');\n" +
         //"while (isBusy()) ;\n" +
         "wait();\n" +
         "if (!t) reportCollision();\n" +
-        "else if (atGoal()) reportGoal();\n" +
+        "else reportFeatures();\n" +
         "}\n" +
         "function walkEast() {\n" +
         "var t = walk('e');\n" +
         //"while (isBusy()) ;\n" +
         "wait();\n" +
         "if (!t) reportCollision();\n" +
-        "else if (atGoal()) reportGoal();\n" +
+        "else reportFeatures();\n" +
         "}\n" +
         "function walkWest() {\n" +
         "var t = walk('w');\n" +
         //"while (isBusy()) ;\n" +
         "wait();\n" +
         "if (!t) reportCollision();\n" +
-        "else if (atGoal()) reportGoal();\n" +
+        "else reportFeatures();\n" +
         "}\n";
         
     var initEnv = function (terp, scope) {
@@ -51,26 +51,27 @@
         wrapper = function () {
             return terp.createPrimitive(game.atGoal());
         };
-        terp.setProperty(scope, 'atGoal',
-            terp.createNativeFunction(wrapper));
-        wrapper = function () {
-            return terp.createPrimitive(game.busy);
-        };
-        terp.setProperty(scope, 'isBusy',
-            terp.createNativeFunction(wrapper));
-        wrapper = function () {
-            if (collisionHandler) {
-                collisionHandler();
-            }
-        };
+        // terp.setProperty(scope, 'atGoal',
+        //     terp.createNativeFunction(wrapper));
+        // wrapper = function () {
+        //     return terp.createPrimitive(game.busy);
+        // };
+        // terp.setProperty(scope, 'isBusy',
+        //     terp.createNativeFunction(wrapper));
+        // wrapper = function () {
+        //     if (collisionHandler) {
+        //         collisionHandler();
+        //     }
+        // };
         terp.setProperty(scope, 'reportCollision',
             terp.createNativeFunction(wrapper));
         wrapper = function () {
-            if (goalHandler) {
-                goalHandler();
+            var f = game.getFeatureProperties();
+            if (featureHandler && (Object.keys(f).length > 0)) {
+                featureHandler(f);
             }
         };
-        terp.setProperty(scope, 'reportGoal',
+        terp.setProperty(scope, 'reportFeatures',
             terp.createNativeFunction(wrapper));
         wrapper = function () {
             waitFlag = true;
@@ -94,8 +95,8 @@ exports.setCollisionHandler = function (h) {
 };
 
 
-exports.setGoalHandler = function (h) {
-    goalHandler = h;
+exports.setFeatureHandler = function (h) {
+    featureHandler = h;
 };
 
 

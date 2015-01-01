@@ -70,7 +70,7 @@
 
     Blockly.Blocks['gridworld_start'] = {
         init: function () {
-            this.setColour(120);
+            this.setColour(240);
             this.appendDummyInput()
                 .appendField('when the program starts');
             this.setTooltip('Attach blocks here');

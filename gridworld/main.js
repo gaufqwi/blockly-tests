@@ -13,7 +13,7 @@
         
         var initBlockly = function () {
             interpreter.init(game);
-            Blockly.inject(document.getElementById('blockly-inner'),
+            Blockly.inject(document.getElementById('blockly'),
                 {toolbox: document.getElementById('toolbox')});
             //console.log('>>',document.getElementById('startblock').childNodes);
             Blockly.Xml.domToWorkspace(Blockly.mainWorkspace,
@@ -30,7 +30,11 @@
                     // Stray blocks - appropriate error
                     console.log('strays');
                 }
+                Blockly.JavaScript.init(Blockly.mainWorkspace);
                 var code = Blockly.JavaScript.blockToCode(blocks[0]);
+                interpreter.setFeatureHandler(function (ob) {
+                    console.log('-Feature', ob);
+                });
                 interpreter.start(code);
             };
         };

@@ -15,51 +15,118 @@
     var player;
     var map;
     
-    var gameState = {
-        preload: function () {
-            console.log('Pre');
-            game.load.spritesheet('player',
-                'assets/gridworld/purple-zombie-ss.png', 40, 40);
-            game.load.tilemap('map', 'assets/gridworld/level1.json', null,
-                Phaser.Tilemap.TILED_JSON);
-            game.load.image('tiles', 'assets/gridworld/tileset.png');
-            game.load.image('features', 'assets/gridworld/features.png');
-        },
-        
-        create: function () {
-            console.log('Create');
-            map = game.add.tilemap('map');
-            
-            map.addTilesetImage('Ground', 'tiles');
-            map.addTilesetImage('Features', 'features');
-            
-            var ground = map.createLayer('Ground');
-            ground.resizeWorld();
-            map.createLayer('Features');
-            
-            player = game.add.sprite(2, 2, 'player');
-            player.animations.add('walk_s', [0,1,2], 6, true);
-            player.animations.add('walk_e', [3,4,5], 6, true);
-            player.animations.add('walk_n', [6,7,8], 6, true);
-            player.animations.add('walk_w', [9,10,11], 6, true);
-            player.animations.add('stand_s', [0], 1, true);
-            player.animations.add('stand_e', [3], 1, true);
-            player.animations.add('stand_n', [6], 1, true);
-            player.animations.add('stand_w', [9], 1, true);
-            player.animations.play('stand_s');
-            
-            initFunc();
-            
-        },
-        
-        update: function () {
-            //console.log('Update Loop', exports.busy);
-        }
+    var bootState = Object.create(Phaser.State.prototype);
+    
+    bootState.preload = function () {
+        console.log('boot preload');
+        // Get progress bar
     };
     
-    exports.atGoal = function () {
-        var tile = map.getTileWorldXY(player.x, player.y);
-        return !!tile && (tile.properties.goal === 'true');
+    bootState.create = function () {
+        console.log('boot create');
+        game.state.start('preload');
+    };
+
+    var preloadState = Object.create(Phaser.State.prototype);
+    
+    preloadState.preload = function () {
+        console.log('preload preload');
+        game.load.spritesheet('player',
+            'assets/gridworld/purple-zombie-ss.png', 40, 40);
+        game.load.tilemap('map', 'assets/gridworld/level1.json', null,
+            Phaser.Tilemap.TILED_JSON);
+        game.load.image('tiles', 'assets/gridworld/tileset.png');
+        game.load.image('features', 'assets/gridworld/features.png');
+    };
+    
+    preloadState.create = function () {
+        console.log('preload create');
+        game.state.start('play');
+    };
+
+    var playState = Object.create(Phaser.State.prototype);
+    
+    playState.create = function () {
+        console.log('play create');
+        map = game.add.tilemap('map');
+        
+        map.addTilesetImage('Ground', 'tiles');
+        map.addTilesetImage('Features', 'features');
+        
+        var ground = map.createLayer('Ground');
+        ground.resizeWorld();
+        map.createLayer('Features');
+        
+        player = game.add.sprite(2, 2, 'player');
+        player.animations.add('walk_s', [0,1,2], 6, true);
+        player.animations.add('walk_e', [3,4,5], 6, true);
+        player.animations.add('walk_n', [6,7,8], 6, true);
+        player.animations.add('walk_w', [9,10,11], 6, true);
+        player.animations.add('stand_s', [0], 1, true);
+        player.animations.add('stand_e', [3], 1, true);
+        player.animations.add('stand_n', [6], 1, true);
+        player.animations.add('stand_w', [9], 1, true);
+        player.animations.play('stand_s');
+        
+        initFunc();
+    };
+    
+    // exports.init = function (game) {
+    //     game.state.add('boot', bootState);
+    //     game.state.add('preload', preloadState);
+    //     game.state.add('play', playState);
+    // }
+
+    
+    // var gameState = {
+    //     preload: function () {
+    //         game.load.spritesheet('player',
+    //             'assets/gridworld/purple-zombie-ss.png', 40, 40);
+    //         game.load.tilemap('map', 'assets/gridworld/level1.json', null,
+    //             Phaser.Tilemap.TILED_JSON);
+    //         game.load.image('tiles', 'assets/gridworld/tileset.png');
+    //         game.load.image('features', 'assets/gridworld/features.png');
+    //     },
+        
+    //     create: function () {
+    //         map = game.add.tilemap('map');
+            
+    //         map.addTilesetImage('Ground', 'tiles');
+    //         map.addTilesetImage('Features', 'features');
+            
+    //         var ground = map.createLayer('Ground');
+    //         ground.resizeWorld();
+    //         map.createLayer('Features');
+            
+    //         player = game.add.sprite(2, 2, 'player');
+    //         player.animations.add('walk_s', [0,1,2], 6, true);
+    //         player.animations.add('walk_e', [3,4,5], 6, true);
+    //         player.animations.add('walk_n', [6,7,8], 6, true);
+    //         player.animations.add('walk_w', [9,10,11], 6, true);
+    //         player.animations.add('stand_s', [0], 1, true);
+    //         player.animations.add('stand_e', [3], 1, true);
+    //         player.animations.add('stand_n', [6], 1, true);
+    //         player.animations.add('stand_w', [9], 1, true);
+    //         player.animations.play('stand_s');
+            
+    //         initFunc();
+            
+    //     },
+        
+    //     update: function () {
+    //         //console.log('Update Loop', exports.busy);
+    //     }
+    // };
+    
+    // exports.atGoal = function () {
+    //     var tile = map.getTileWorldXY(player.x, player.y);
+    //     return !!tile && (tile.properties.goal === 'true');
+    // };
+    
+    exports.getFeatureProperties = function () {
+        var tile = map.getTileWorldXY(player.x, player.y, tileSize, tileSize,
+            'Features');
+        return tile ? tile.properties : {};
     };
 
     exports.walk = function (dir) {
@@ -120,11 +187,15 @@
         nextStepFunc = nextstep_func;
         exports.busy = false;
         game = new Phaser.Game(boardX*tileSize, boardY*tileSize,
-            Phaser.AUTO, 'grid-container', gameState);
-            console.log('End game init');
+            Phaser.AUTO, 'phaser');
+        console.log('End game init');
+        game.state.add('boot', bootState);
+        game.state.add('preload', preloadState);
+        game.state.add('play', playState);
+        game.state.start('boot');
         return game;
     };
 
-    exports.busy = false;
+    //exports.busy = false;
     
 })(module, exports, Phaser);
