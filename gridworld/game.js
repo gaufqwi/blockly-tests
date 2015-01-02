@@ -101,6 +101,27 @@
             'Features');
         return tile ? tile.properties : {};
     };
+    
+    exports.setFacing = function (dir) {
+        facing = dir;
+        player.animations.play('stand_' + facing);
+    };
+    
+    var directions = ['n', 'e', 's', 'w'];
+    var dirmap = {n : 0, e : 1, s: 2, w: 3};
+    
+    exports.turn = function (n) {
+        var x = (dirmap[facing] + n) % 4;
+        if (x < 0) {
+            x = (x + 4) % 4;
+        }
+        facing = directions[x];
+        player.animations.play('stand_' + facing);
+    };
+    
+    exports.walkForward = function () {
+        exports.walk(facing);  
+    };
 
     exports.walk = function (dir) {
         switch (dir) {

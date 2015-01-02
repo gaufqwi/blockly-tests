@@ -68,6 +68,36 @@
         return 'walkWest();\n';
     };
 
+    Blockly.Blocks['gridworld_turnright'] = {
+        init: function () {
+            this.setColour(320);
+            this.appendDummyInput()
+                .appendField('turn right');
+            this.setTooltip('Ask the zombie to turn to his right');
+            this.setNextStatement(true);
+            this.setPreviousStatement(true);
+        }
+    };
+    
+    Blockly.JavaScript['gridworld_turnright'] = function (block) {
+        return 'turnRight();\n';
+    };
+
+    Blockly.Blocks['gridworld_turnleft'] = {
+        init: function () {
+            this.setColour(320);
+            this.appendDummyInput()
+                .appendField('turn left');
+            this.setTooltip('Ask the zombie to turn to his left');
+            this.setNextStatement(true);
+            this.setPreviousStatement(true);
+        }
+    };
+    
+    Blockly.JavaScript['gridworld_turnleft'] = function (block) {
+        return 'turnLeft();\n';
+    };
+
     Blockly.Blocks['gridworld_start'] = {
         init: function () {
             this.setColour(240);

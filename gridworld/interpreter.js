@@ -15,31 +15,45 @@
     var baseCode = 
         "function walkNorth() {\n" +
         "var t = walk('n');\n" +
-        //"while (isBusy()) ;\n" +
         "wait();\n" +
         "if (!t) reportCollision();\n" +
         "else reportFeatures();\n" +
         "}\n" +
         "function walkSouth() {\n" +
         "var t = walk('s');\n" +
-        //"while (isBusy()) ;\n" +
         "wait();\n" +
         "if (!t) reportCollision();\n" +
         "else reportFeatures();\n" +
         "}\n" +
         "function walkEast() {\n" +
         "var t = walk('e');\n" +
-        //"while (isBusy()) ;\n" +
         "wait();\n" +
         "if (!t) reportCollision();\n" +
         "else reportFeatures();\n" +
         "}\n" +
         "function walkWest() {\n" +
         "var t = walk('w');\n" +
-        //"while (isBusy()) ;\n" +
         "wait();\n" +
         "if (!t) reportCollision();\n" +
         "else reportFeatures();\n" +
+        "}\n" +
+        "function faceNorth() {\n" +
+        "face('n');\n" +
+        "}\n" +
+        "function faceEast() {\n" +
+        "face('e');\n" +
+        "}\n" +
+        "function faceSouth() {\n" +
+        "face('s');\n" +
+        "}\n" +
+        "function faceWest() {\n" +
+        "face('w');\n" +
+        "}\n" +
+        "function turnRight() {\n" +
+        "turn(1);\n" +
+        "}\n" +
+        "function turnLeft() {\n" +
+        "turn(-1);\n" +
         "}\n";
         
     var initEnv = function (terp, scope) {
@@ -51,18 +65,6 @@
         wrapper = function () {
             return terp.createPrimitive(game.atGoal());
         };
-        // terp.setProperty(scope, 'atGoal',
-        //     terp.createNativeFunction(wrapper));
-        // wrapper = function () {
-        //     return terp.createPrimitive(game.busy);
-        // };
-        // terp.setProperty(scope, 'isBusy',
-        //     terp.createNativeFunction(wrapper));
-        // wrapper = function () {
-        //     if (collisionHandler) {
-        //         collisionHandler();
-        //     }
-        // };
         terp.setProperty(scope, 'reportCollision',
             terp.createNativeFunction(wrapper));
         wrapper = function () {
@@ -78,12 +80,22 @@
         };
         terp.setProperty(scope, 'wait',
             terp.createNativeFunction(wrapper));
-      wrapper = function(id) {
-        id = id ? id.toString() : '';
-        Blockly.mainWorkspace.highlightBlock(id);
-      };
-      terp.setProperty(scope, 'highlightBlock',
-          terp.createNativeFunction(wrapper));
+        wrapper = function(id) {
+            id = id ? id.toString() : '';
+            Blockly.mainWorkspace.highlightBlock(id);
+        };
+        terp.setProperty(scope, 'highlightBlock',
+            terp.createNativeFunction(wrapper));
+        wrapper = function (dir) {
+            game.setFacing(dir.toString());
+        };
+        terp.setProperty(scope, 'setFacing',
+            terp.createNativeFunction(wrapper));
+        wrapper = function (num) {
+            game.turn(num.toNumber());
+        };
+        terp.setProperty(scope, 'turn',
+            terp.createNativeFunction(wrapper));
     };
  
 exports.init = function (g) {
