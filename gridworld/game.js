@@ -7,12 +7,10 @@
     var tileSize = 48;
     var boardX = 12;
     var boardY = 12;
-    var walkTime = 1200;
 
-    var theme = 'zombie';
+    var theme;
     var baseUrl = 'assets/gridworld/';
     var config;
-    var initFunc;
     var nextStepFunc;
     var game;
     var player;
@@ -33,7 +31,6 @@
     bootState.create = function () {
         console.log('boot create');
         config = game.cache.getJSON('config');
-        console.log(config);
         game.state.start('preload');
     };
 
@@ -94,9 +91,9 @@
             config.player.animations[a].fps, true);
         }
 
-        setLevel(0);
+        //exports.setLevel(0);
         
-        initFunc();
+        exports.ready.dispatch();
     };
 
     exports.getFeatureProperties = function () {
@@ -136,7 +133,7 @@
             //exports.busy = true;
             player.animations.play('walk_' + dir);
             var timer = game.time.create(true);
-            timer.add(confif.player.speed, function () {
+            timer.add(config.player.speed, function () {
                 //exports.busy = false;
                 player.animations.play('stand_' + dir);
                 nextStepFunc();
@@ -158,21 +155,30 @@
         return true;
     };
     
-    exports.init = function (init_func, nextstep_func) {
-        initFunc = init_func;
-        nextStepFunc = nextstep_func;
-        exports.busy = false;
+    exports.init = function (container, thm) {
+        //initFunc = init_func;
+        //nextStepFunc = nextstep_func;
+        //exports.busy = false;
+        theme = thm;
         game = new Phaser.Game(boardX*tileSize, boardY*tileSize,
-            Phaser.AUTO, 'phaser');
-        console.log('End game init');
+            Phaser.AUTO, container);
         game.state.add('boot', bootState);
         game.state.add('preload', preloadState);
         game.state.add('play', playState);
-        game.state.start('boot');
-        return game;
+        //game.state.start('boot');
+        //return game;
+        console.log('game init');
     };
+    
+    exports.setNextStepFunction = function (f) {
+        nextStepFunc = f;
+    }
+    
+    exports.start = function () {
+        game.state.start('boot')
+    }
 
-    var setLevel = function (n) {
+    exports.setLevel = function (n) {
         var level = config.levels[n];
         
         if (map) {
@@ -192,6 +198,9 @@
         player.y = config.player.offset_y + tileSize*level.start_y;
         player.animations.play('stand_' + facing);
         player.bringToTop();
+        return level;
     };
+    
+    exports.ready = new Phaser.Signal();
     
 })(module, exports, Phaser);

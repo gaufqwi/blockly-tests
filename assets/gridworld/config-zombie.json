@@ -1,0 +1,61 @@
+{
+    "title" : "Zombie Quest",
+    "url_prefix" : "",
+    "tilesets" : {
+        "main" : "tileset.png",
+        "features" : "features.png"
+    },
+    "player" : {
+        "spritesheet" : "purple-zombie-ss.png",
+        "width" : 40,
+        "height" : 40,
+        "offset_x" : 2,
+        "offset_y" : 2,
+        "speed" : 1200,
+        "animations" : {
+            "walk_s" : {
+                "frames" : [0,1,2],
+                "fps" : 6
+            },
+            "stand_s" : {
+                "frames" : [0],
+                "fps" : 1
+            },
+            "walk_e" : {
+                "frames" : [3,4,5],
+                "fps" : 6
+            },
+            "stand_e" : {
+                "frames" : [3],
+                "fps" : 1
+            },
+            "walk_n" : {
+                "frames" : [6,7,8],
+                "fps" : 6
+            },
+            "stand_n" : {
+                "frames" : [6],
+                "fps" : 1
+            },
+            "walk_w" : {
+                "frames" : [9,10,11],
+                "fps" : 6
+            },
+            "stand_w" : {
+                "frames" : [9],
+                "fps" : 1
+            }
+        }
+    },
+    "levels" : [
+        {
+            "map" : "level1.json",
+            "start_x" : 0,
+            "start_y" : 0,
+            "facing" : "s",
+            "goal" : "Go to the goo pit",
+            "max_blocks" : 6,
+            "blocks" : ["controls_repeat", "gridworld_gonorth", "gridworld_goeast", "gridworld_gosouth", "gridworld_gowest"]
+        }
+        ]
+}

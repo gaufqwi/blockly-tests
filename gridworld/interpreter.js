@@ -88,6 +88,9 @@
  
 exports.init = function (g) {
     game = g;
+    g.setNextStepFunction(function () {
+        setTimeout(step, 0);
+    });
 };
 
 exports.setCollisionHandler = function (h) {
