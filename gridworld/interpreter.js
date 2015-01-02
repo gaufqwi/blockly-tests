@@ -13,6 +13,7 @@
     var activeTerp;
  
     var baseCode = 
+        // Walking (absolute)
         "function walkNorth() {\n" +
         "var t = walk('n');\n" +
         "wait();\n" +
@@ -37,18 +38,27 @@
         "if (!t) reportCollision();\n" +
         "else reportFeatures();\n" +
         "}\n" +
+        // Walking (relative)
+        "function walkForward() {\n" +
+        "var t = walkForwardInternal();\n" +
+        "wait();\n" +
+        "if (!t) reportCollision();\n" +
+        "else reportFeatures();\n" +
+        "}\n" +
+        // Facing (absolute)
         "function faceNorth() {\n" +
-        "face('n');\n" +
+        "setFacing('n');\n" +
         "}\n" +
         "function faceEast() {\n" +
-        "face('e');\n" +
+        "setFacing('e');\n" +
         "}\n" +
         "function faceSouth() {\n" +
-        "face('s');\n" +
+        "setFacing('s');\n" +
         "}\n" +
         "function faceWest() {\n" +
-        "face('w');\n" +
+        "setFacing('w');\n" +
         "}\n" +
+        // Facing (relative)
         "function turnRight() {\n" +
         "turn(1);\n" +
         "}\n" +
@@ -95,6 +105,11 @@
             game.turn(num.toNumber());
         };
         terp.setProperty(scope, 'turn',
+            terp.createNativeFunction(wrapper));
+        wrapper = function () {
+            return terp.createPrimitive(game.walkForward());
+        };
+        terp.setProperty(scope, 'walkForwardInternal',
             terp.createNativeFunction(wrapper));
     };
  

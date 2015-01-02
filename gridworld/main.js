@@ -86,7 +86,8 @@
             }
             Blockly.updateToolbox('<xml>' + xml + '</xml>');
             Blockly.mainWorkspace.clear();
-            Blockly.mainWorkspace.maxBlocks = level.max_blocks + 1;
+            Blockly.mainWorkspace.maxBlocks = ('max_blocks' in level ?
+                level.max_blocks + 1 : Infinity);
             Blockly.Xml.domToWorkspace(Blockly.mainWorkspace,
                 defaultWorkspaceDom);
             ui.setGoal(level.goal);

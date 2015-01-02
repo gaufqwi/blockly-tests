@@ -13,28 +13,16 @@
             <div class="blockly-controls">
                 <div class="label">Blocks Left:
                 <span id="blocksleft">&infin;</span></div>
-                <button id="gobutton">Go</button>
+                <button id="gobutton" class="gobutton">Do It!</button>
             </div>
         </div>
         <div class="column">
-            <div id="goal">Eat brains</div>
+            <div id="goal" class="theme-goal"></div>
             <div id="phaser" class="column phaser-container"></div>
         </div>
     </div>
-    
-<xml id="toolbox" style="display: none">
-  <block type="gridworld_gonorth"></block>
-  <block type="gridworld_gosouth"></block>
-  <block type="gridworld_goeast"></block>
-  <block type="gridworld_gowest"></block>
-  <block type="controls_repeat"></block>
-</xml>
 
-<xml id="startblock" style="display: none">
-    <block type="gridworld_start" deletable="false" moveble="false" x="200" y="10"></block>
-</xml>
-
-
+    <!-- Here be Javascript -->
     <script src="js/vendor/blockly/blockly_compressed.js"></script>
     <script src="js/vendor/blockly/blocks/loops.js"></script>
     <script src="js/vendor/blockly/javascript_compressed.js"></script>

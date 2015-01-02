@@ -22,14 +22,12 @@
     var bootState = Object.create(Phaser.State.prototype);
     
     bootState.preload = function () {
-        console.log('boot preload');
         game.load.spritesheet('progbar',
             baseUrl + 'progbar-ss.png', 400, 50);
         game.load.json('config', baseUrl + 'config-' + theme + '.json');
     };
     
     bootState.create = function () {
-        console.log('boot create');
         config = game.cache.getJSON('config');
         game.state.start('preload');
     };
@@ -37,7 +35,6 @@
     var preloadState = Object.create(Phaser.State.prototype);
     
     preloadState.preload = function () {
-        console.log('preload preload');
         // Set up loading display
         var progbar = game.add.sprite(
             game.world.centerX-200, game.world.centerY, 'progbar');
@@ -72,7 +69,6 @@
     };
 
     preloadState.create = function () {
-        console.log('preload create');
         game.state.start('play');
     };
 
@@ -120,7 +116,7 @@
     };
     
     exports.walkForward = function () {
-        exports.walk(facing);  
+        return exports.walk(facing);  
     };
 
     exports.walk = function (dir) {

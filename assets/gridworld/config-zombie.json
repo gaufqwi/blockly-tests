@@ -54,8 +54,20 @@
             "start_y" : 0,
             "facing" : "s",
             "goal" : "Go to the goo pit",
-            "max_blocks" : 6,
-            "blocks" : ["controls_repeat", "gridworld_gonorth", "gridworld_goeast", "gridworld_gosouth", "gridworld_gowest"]
+            "blocks" : [
+                "controls_repeat",
+                "gridworld_gonorth",
+                "gridworld_goeast",
+                "gridworld_gosouth",
+                "gridworld_gowest",
+                "gridworld_goforward",
+                "gridworld_facenorth",
+                "gridworld_facesouth",
+                "gridworld_faceeast",
+                "gridworld_facewest",
+                "gridworld_turnleft",
+                "gridworld_turnright"
+                ]
         }
         ]
 }

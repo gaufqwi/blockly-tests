@@ -13,7 +13,7 @@
             this.setColour(320);
             this.appendDummyInput()
                 .appendField('go north');
-            this.setTooltip('Ask the zombie to move north');
+            this.setTooltip('Move north (towards the top of the screen)');
             this.setNextStatement(true);
             this.setPreviousStatement(true);
         }
@@ -28,7 +28,7 @@
             this.setColour(320);
             this.appendDummyInput()
                 .appendField('go south');
-            this.setTooltip('Ask the zombie to move south');
+            this.setTooltip('Move south (towards the bottom of the screen)');
             this.setNextStatement(true);
             this.setPreviousStatement(true);
         }
@@ -43,7 +43,7 @@
             this.setColour(320);
             this.appendDummyInput()
                 .appendField('go east');
-            this.setTooltip('Ask the zombie to move east');
+            this.setTooltip('Move east (towards the right side of the screen)');
             this.setNextStatement(true);
             this.setPreviousStatement(true);
         }
@@ -58,14 +58,25 @@
             this.setColour(320);
             this.appendDummyInput()
                 .appendField('go west');
-            this.setTooltip('Ask the zombie to move west');
+            this.setTooltip('Move west (towards the left side of the screen)');
             this.setNextStatement(true);
             this.setPreviousStatement(true);
         }
     };
     
-    Blockly.JavaScript['gridworld_gowest'] = function (block) {
-        return 'walkWest();\n';
+    Blockly.Blocks['gridworld_goforward'] = {
+        init: function () {
+            this.setColour(320);
+            this.appendDummyInput()
+                .appendField('go forward');
+            this.setTooltip('Move forward without changing facing');
+            this.setNextStatement(true);
+            this.setPreviousStatement(true);
+        }
+    };
+    
+    Blockly.JavaScript['gridworld_goforward'] = function (block) {
+        return 'walkForward();\n';
     };
 
     Blockly.Blocks['gridworld_turnright'] = {
@@ -73,7 +84,7 @@
             this.setColour(320);
             this.appendDummyInput()
                 .appendField('turn right');
-            this.setTooltip('Ask the zombie to turn to his right');
+            this.setTooltip('Turn 90 degrees to the right');
             this.setNextStatement(true);
             this.setPreviousStatement(true);
         }
@@ -88,7 +99,7 @@
             this.setColour(320);
             this.appendDummyInput()
                 .appendField('turn left');
-            this.setTooltip('Ask the zombie to turn to his left');
+            this.setTooltip('Turn 90 degrees to the left');
             this.setNextStatement(true);
             this.setPreviousStatement(true);
         }
@@ -96,6 +107,66 @@
     
     Blockly.JavaScript['gridworld_turnleft'] = function (block) {
         return 'turnLeft();\n';
+    };
+
+    Blockly.Blocks['gridworld_facenorth'] = {
+        init: function () {
+            this.setColour(320);
+            this.appendDummyInput()
+                .appendField('face north');
+            this.setTooltip('Face north (towards the top of the screen)');
+            this.setNextStatement(true);
+            this.setPreviousStatement(true);
+        }
+    };
+    
+    Blockly.JavaScript['gridworld_facenorth'] = function (block) {
+        return 'faceNorth();\n';
+    };
+
+    Blockly.Blocks['gridworld_facesouth'] = {
+        init: function () {
+            this.setColour(320);
+            this.appendDummyInput()
+                .appendField('face south');
+            this.setTooltip('Face south (towards the bottom of the screen)');
+            this.setNextStatement(true);
+            this.setPreviousStatement(true);
+        }
+    };
+    
+    Blockly.JavaScript['gridworld_facesouth'] = function (block) {
+        return 'faceSouth();\n';
+    };
+
+    Blockly.Blocks['gridworld_faceeast'] = {
+        init: function () {
+            this.setColour(320);
+            this.appendDummyInput()
+                .appendField('face east');
+            this.setTooltip('Face east (towards the right side of the screen)');
+            this.setNextStatement(true);
+            this.setPreviousStatement(true);
+        }
+    };
+    
+    Blockly.JavaScript['gridworld_faceeast'] = function (block) {
+        return 'faceEast();\n';
+    };
+
+    Blockly.Blocks['gridworld_facewest'] = {
+        init: function () {
+            this.setColour(320);
+            this.appendDummyInput()
+                .appendField('face west');
+            this.setTooltip('Face west (towards the left side of the screen)');
+            this.setNextStatement(true);
+            this.setPreviousStatement(true);
+        }
+    };
+    
+    Blockly.JavaScript['gridworld_facewest'] = function (block) {
+        return 'faceWest();\n';
     };
 
     Blockly.Blocks['gridworld_start'] = {

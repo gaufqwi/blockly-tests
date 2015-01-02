@@ -18,7 +18,9 @@
     };
     
     exports.setBlocksLeft = function (n) {
-        n === Infinity ? '&infin;' : n;
+        if (n === Infinity) {
+            n = '&infin;';
+        }
         blocksLeft.innerHTML = n;
     };
     
