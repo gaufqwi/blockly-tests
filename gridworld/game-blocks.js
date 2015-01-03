@@ -64,6 +64,10 @@
         }
     };
     
+    Blockly.JavaScript['gridworld_gowest'] = function (block) {
+        return 'walkWest();\n';
+    };
+    
     Blockly.Blocks['gridworld_goforward'] = {
         init: function () {
             this.setColour(320);

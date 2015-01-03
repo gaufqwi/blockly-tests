@@ -12,34 +12,6 @@
     
     window.onload = function () {
         
-        // var initBlockly = function () {
-        //     interpreter.init(game);
-        //     Blockly.inject(document.getElementById('blockly'),
-        //         {toolbox: document.getElementById('toolbox')});
-        //     //console.log('>>',document.getElementById('startblock').childNodes);
-        //     Blockly.Xml.domToWorkspace(Blockly.mainWorkspace,
-        //         document.getElementById('startblock'));
-
-        //     document.getElementById('gobutton').onclick = function () {
-        //         Blockly.mainWorkspace.traceOn(true);
-        //         Blockly.mainWorkspace.highlightBlock(null);
-        //         var blocks = Blockly.mainWorkspace.getTopBlocks();
-        //         if (blocks.length === 0) {
-        //             // No code - Appropriate error
-        //             console.log('no code');
-        //         } else if (blocks.length > 1) {
-        //             // Stray blocks - appropriate error
-        //             console.log('strays');
-        //         }
-        //         Blockly.JavaScript.init(Blockly.mainWorkspace);
-        //         var code = Blockly.JavaScript.blockToCode(blocks[0]);
-        //         interpreter.setFeatureHandler(function (ob) {
-        //             console.log('-Feature', ob);
-        //         });
-        //         interpreter.start(code);
-        //     };
-        // };
-        
         ui.setGoButtonHandler(function () {
             Blockly.mainWorkspace.traceOn(true);
             Blockly.mainWorkspace.highlightBlock(null);
@@ -53,9 +25,9 @@
             }
             Blockly.JavaScript.init(Blockly.mainWorkspace);
             var code = Blockly.JavaScript.blockToCode(blocks[0]);
-            interpreter.setFeatureHandler(function (ob) {
-                console.log('-Feature', ob);
-            });
+            // interpreter.setFeatureHandler(function (ob) {
+            //     console.log('-Feature', ob);
+            // });
             interpreter.start(code);
         });
         
@@ -66,8 +38,16 @@
         Blockly.inject(ui.blockly, {toolbox: '<xml></xml>'});
         Blockly.addChangeListener(function () {
             ui.setBlocksLeft(Blockly.mainWorkspace.remainingCapacity());
-        })
-        game.ready.add (function () {
+        });
+        
+        game.collision.add(function () {
+            game.stopMove();
+            console.log('Bump!');
+        });
+        game.features.add(function (f) {
+            console.log('Yay!', f);
+        });
+        game.ready.add (function (type) {
             setupLevel(0);
         });
         

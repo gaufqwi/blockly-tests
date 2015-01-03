@@ -18,6 +18,7 @@
     var ground;
     var features;
     var facing;
+    var stopFlag;
 
     var bootState = Object.create(Phaser.State.prototype);
     
@@ -87,8 +88,6 @@
             config.player.animations[a].fps, true);
         }
 
-        //exports.setLevel(0);
-        
         exports.ready.dispatch();
     };
 
@@ -120,6 +119,7 @@
     };
 
     exports.walk = function (dir) {
+        stopFlag = false;
         switch (dir) {
             case 'n':
                 var dX = 0;
@@ -146,18 +146,26 @@
             player.x + dX*tileSize, player.y + dY*tileSize,
             tileSize, tileSize, 'Ground');
         if (!dest || (dest.properties.blocker === 'true')) {
-            // Obstacle; walk in place
-            //exports.busy = true;
-            player.animations.play('walk_' + dir);
-            var timer = game.time.create(true);
-            timer.add(config.player.speed, function () {
-                //exports.busy = false;
-                player.animations.play('stand_' + dir);
-                nextStepFunc();
-            });
-            timer.start();
+            // Obstacle; See is any listeners care
+            exports.collision.dispatch();   // TODO: Could include more info
+            if (!stopFlag) {
+                // Walk in place
+                player.animations.play('walk_' + dir);
+                var timer = game.time.create(true);
+                timer.add(config.player.speed, function () {
+                    //exports.busy = false;
+                    player.animations.play('stand_' + dir);
+                    //nextStepFunc();
+                    exports.resume.dispatch();
+                });
+                timer.start();
+            } else {
+                // Just resume interpreter immediately
+                exports.resume.dispatch();
+            }
             return false;
         }
+        //TODO: (maybe) dispatch other events and check stopFlag
         // Nothing in the way; go ahead
         var tween = game.add.tween(player);
         tween.to(tweenProps, config.player.speed);
@@ -166,24 +174,31 @@
         tween.onComplete.add(function () {
             //exports.busy = false;
             player.animations.play('stand_' + dir);
-            nextStepFunc();
+            //nextStepFunc();
+            exports.resume.dispatch();
         }, this);
         tween.start();
         return true;
     };
     
+    exports.stopMove = function () {
+        stopFlag = true;
+    };
+    
     exports.init = function (container, thm) {
-        //initFunc = init_func;
-        //nextStepFunc = nextstep_func;
-        //exports.busy = false;
         theme = thm;
         game = new Phaser.Game(boardX*tileSize, boardY*tileSize,
             Phaser.AUTO, container);
         game.state.add('boot', bootState);
         game.state.add('preload', preloadState);
         game.state.add('play', playState);
-        //game.state.start('boot');
-        //return game;
+
+        // Signals
+        exports.ready = new Phaser.Signal();
+        exports.collision = new Phaser.Signal();
+        exports.resume = new Phaser.Signal();
+        exports.features = new Phaser.Signal();
+        exports.events = new Phaser.Signal();
         console.log('game init');
     };
     
@@ -217,7 +232,5 @@
         player.bringToTop();
         return level;
     };
-    
-    exports.ready = new Phaser.Signal();
     
 })(module, exports, Phaser);
