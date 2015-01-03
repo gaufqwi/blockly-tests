@@ -12,6 +12,11 @@
     
     window.onload = function () {
         
+        // Test ////
+        document.getElementById('shower').onclick = function () {
+            ui.toggleDialog(true, 'Hiya!');
+        };
+        
         ui.setGoButtonHandler(function () {
             Blockly.mainWorkspace.traceOn(true);
             Blockly.mainWorkspace.highlightBlock(null);

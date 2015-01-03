@@ -79,6 +79,21 @@ body {
 	top:1px;
 }
 
+.gridworld-dialog {
+    box-shadow: 4px 4px 2px;
+    border: 2px solid black;
+    background-color: white;
+    width: 400px;
+}
+
+.gridworld-dialog .content {
+    padding: 4px;
+}
+
+.gridworld-dialog button {
+    float: right;
+}
+
 /* Theme stuff */
 
 .theme-goal {
