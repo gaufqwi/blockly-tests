@@ -49,8 +49,13 @@ function meta_task(key) {
             .pipe(gulp.dest('site/'));
     });
     
+    gulp.task(key + '-assets-dist', function () {
+        return gulp.src('assets/' + key + '/*')
+            .pipe(gulp.dest('site/assets/' + key + '/'));
+    });
+    
     gulp.task('build-' + key, ['vendor-js-dist',
-        key + '-js-dist', key + '-html-dist']); 
+        key + '-js-dist', key + '-html-dist', key + '-assets-dist']); 
     
     gulp.task('watch-' + key, function () {
         gulp.watch(key + '/*.js', ['browserify-' + key]);
