@@ -1,0 +1,12 @@
+Ok, it's basically working. Things to work on:
+
+*Last level / error handling
+*Javadoc / better commenting
+*ui is ugly, both the code and the display/css.
+*More themability
+*More blocks
+*More variety in rulesets
+*Replace module-based quasi-singletons with true OO
+*Richer set of actions and animations
+*Cleanup of main.js - state transitions are sloppy
+*Make sure there are no race conditions between ui, Phaser, and interpreter
