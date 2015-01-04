@@ -54,6 +54,17 @@
             "start_y" : 0,
             "facing" : "s",
             "goal" : "Go to the goo pit",
+            "rules" : {
+                "collision" : {
+                    "failure" : true,
+                    "interrupt" : false,
+                    "message" : "Ouch! You ran into an obstacle. Try again."
+                },
+                "goal" : {
+                    "type" : "goo",
+                    "message" : "Hooray! Goo, sweet goo."
+                }
+            },
             "blocks" : [
                 "controls_repeat",
                 "gridworld_gonorth",
@@ -67,6 +78,29 @@
                 "gridworld_facewest",
                 "gridworld_turnleft",
                 "gridworld_turnright"
+                ]
+        },
+        {
+            "map" : "level2.json",
+            "start_x" : 2,
+            "start_y" : 5,
+            "facing" : "e",
+            "goal" : "Go to the flower.",
+            "max_blocks" : 2,
+            "rules" : {
+                "collision" : {
+                    "failure" : true,
+                    "interrupt" : false,
+                    "message" : "Ouch! You ran into an obstacle. Try again."
+                },
+                "goal" : {
+                    "type" : "flower",
+                    "message" : "Pretty flower."
+                }
+            },
+            "blocks" : [
+                "controls_repeat",
+                "gridworld_goforward"
                 ]
         }
         ]

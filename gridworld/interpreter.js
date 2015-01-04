@@ -5,43 +5,36 @@
 (function (module, exports, Interpreter, Blockly) {
     var defaultWait = 10;
     
-    var goFlag;
-    var waitFlag;
+    var isRunning;
+    var isPaused;
     var game;
     // var collisionHandler;
     // var featureHandler;
     var activeTerp;
- 
+    var finishedCallback;
+
     var baseCode = 
         // Walking (absolute)
         "function walkNorth() {\n" +
-        "var t = walk('n');\n" +
+        "walk('n');\n" +
         "wait();\n" +
-        // "if (!t) reportCollision();\n" +
-        // "else reportFeatures();\n" +
         "}\n" +
         "function walkSouth() {\n" +
-        "var t = walk('s');\n" +
+        "walk('s');\n" +
         "wait();\n" +
-        // "if (!t) reportCollision();\n" +
-        // "else reportFeatures();\n" +
         "}\n" +
         "function walkEast() {\n" +
-        "var t = walk('e');\n" +
+        "walk('e');\n" +
         "wait();\n" +
-        // "if (!t) reportCollision();\n" +
-        // "else reportFeatures();\n" +
         "}\n" +
         "function walkWest() {\n" +
-        "var t = walk('w');\n" +
+        "walk('w');\n" +
         "wait();\n" +
-        // "if (!t) reportCollision();\n" +
-        // "else reportFeatures();\n" +
         "}\n" +
         // Walking (relative)
         "function walkForward() {\n" +
-        "var t = walkForwardInternal();\n" +
-        // "wait();\n" +
+        "walkForwardInternal();\n" +
+        "wait();\n" +
         // "if (!t) reportCollision();\n" +
         // "else reportFeatures();\n" +
         "}\n" +
@@ -90,7 +83,10 @@
             terp.createNativeFunction(wrapper));
         // wait
         wrapper = function () {
-            waitFlag = true;
+            isPaused = true;
+            game.actionFinish.addOnce(function () {
+                setTimeout(step, 0);
+            });
         };
         terp.setProperty(scope, 'wait',
             terp.createNativeFunction(wrapper));
@@ -123,35 +119,37 @@
  
 exports.init = function (g) {
     game = g;
-    // g.setNextStepFunction(function () {
+    // g.resume.add(function () {
     //     setTimeout(step, 0);
     // });
-    g.resume.add(function () {
-        setTimeout(step, 0);
-    });
 };
 
-// exports.setCollisionHandler = function (h) {
-//     collisionHandler = h;
-// };
-
-
-// exports.setFeatureHandler = function (h) {
-//     featureHandler = h;
-// };
-
-
 var step = function () {
-    waitFlag = false;
-    if (goFlag && activeTerp.step() && !waitFlag) {
-        setTimeout(step, defaultWait);
+    if (!isRunning) {
+        if (finishedCallback) {
+            finishedCallback(false);
+        }
+        return;
+    }
+    isPaused = false;
+    if (activeTerp.step()) {
+        if (!isPaused) {
+            setTimeout(step, defaultWait);
+        }
+    } else if (finishedCallback) {
+        finishedCallback(true);
     }
 };
  
-exports.start = function (code) {
-    goFlag = true;
+exports.start = function (code, cb) {
+    finishedCallback = cb;
+    isRunning = true;
     activeTerp = new Interpreter(baseCode + code, initEnv);
     setTimeout(step ,0);
+};
+
+exports.pause = function () {
+    isPaused = true;
 };
 
 exports.resume = function () {
@@ -159,7 +157,7 @@ exports.resume = function () {
 };
  
 exports.stop = function () {
-    goFlag = false;
+    isRunning = false;
 };
  
 })(module, exports, Interpreter, Blockly);

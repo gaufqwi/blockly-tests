@@ -18,7 +18,7 @@
     var ground;
     var features;
     var facing;
-    var stopFlag;
+    var actionCanceled;
 
     var bootState = Object.create(Phaser.State.prototype);
     
@@ -76,8 +76,6 @@
     var playState = Object.create(Phaser.State.prototype);
     
     playState.create = function () {
-        console.log('play create');
-
         player = game.add.sprite(0, 0, 'player');
         
         var animations = ['walk_s', 'stand_s', 'walk_e', 'stand_e', 'walk_n',
@@ -88,7 +86,7 @@
             config.player.animations[a].fps, true);
         }
 
-        exports.ready.dispatch();
+        exports.gameReady.dispatch();
     };
 
     exports.getFeatureProperties = function () {
@@ -107,19 +105,22 @@
     
     exports.turn = function (n) {
         var x = (dirmap[facing] + n) % 4;
+        exports.actionStart('turn');
         if (x < 0) {
             x = (x + 4) % 4;
         }
         facing = directions[x];
         player.animations.play('stand_' + facing);
+        exports.actionFinish.dispatch('turn');
     };
     
     exports.walkForward = function () {
-        return exports.walk(facing);  
+        exports.walk(facing);  
     };
 
     exports.walk = function (dir) {
-        stopFlag = false;
+        actionCanceled = false;
+        exports.actionStart.dispatch('walk');
         switch (dir) {
             case 'n':
                 var dX = 0;
@@ -148,7 +149,7 @@
         if (!dest || (dest.properties.blocker === 'true')) {
             // Obstacle; See is any listeners care
             exports.collision.dispatch();   // TODO: Could include more info
-            if (!stopFlag) {
+            if (!actionCanceled) {
                 // Walk in place
                 player.animations.play('walk_' + dir);
                 var timer = game.time.create(true);
@@ -156,16 +157,16 @@
                     //exports.busy = false;
                     player.animations.play('stand_' + dir);
                     //nextStepFunc();
-                    exports.resume.dispatch();
+                    exports.actionFinish.dispatch('walk');
                 });
                 timer.start();
             } else {
                 // Just resume interpreter immediately
-                exports.resume.dispatch();
+                exports.actionFinish.dispatch('walk');
             }
-            return false;
+            return;
         }
-        //TODO: (maybe) dispatch other events and check stopFlag
+        //TODO: (maybe) dispatch other events and check actionCanceled
         // Nothing in the way; go ahead
         var tween = game.add.tween(player);
         tween.to(tweenProps, config.player.speed);
@@ -175,14 +176,17 @@
             //exports.busy = false;
             player.animations.play('stand_' + dir);
             //nextStepFunc();
-            exports.resume.dispatch();
+            var features = exports.getFeatureProperties();
+            if (Object.keys(features).length > 0) {
+                exports.featureSeen.dispatch(features);
+            }
+            exports.actionFinish.dispatch('walk');
         }, this);
         tween.start();
-        return true;
     };
     
-    exports.stopMove = function () {
-        stopFlag = true;
+    exports.cancelAction = function () {
+        actionCanceled = true;
     };
     
     exports.init = function (container, thm) {
@@ -194,21 +198,33 @@
         game.state.add('play', playState);
 
         // Signals
-        exports.ready = new Phaser.Signal();
+        exports.gameReady = new Phaser.Signal();
         exports.collision = new Phaser.Signal();
-        exports.resume = new Phaser.Signal();
-        exports.features = new Phaser.Signal();
-        exports.events = new Phaser.Signal();
-        console.log('game init');
+        exports.actionFinish = new Phaser.Signal();
+        exports.actionStart = new Phaser.Signal();
+        exports.featureSeen = new Phaser.Signal();
     };
     
     exports.setNextStepFunction = function (f) {
         nextStepFunc = f;
-    }
+    };
     
     exports.start = function () {
-        game.state.start('boot')
-    }
+        game.state.start('boot');
+    };
+    
+    exports.togglePaused = function (b) {
+        game.paused = b;
+    };
+
+    exports.resetLevel = function (n) {
+        var level = config.levels[n];
+        facing = level.facing;
+        player.x = config.player.offset_x + tileSize*level.start_x;
+        player.y = config.player.offset_y + tileSize*level.start_y;
+        player.animations.play('stand_' + facing);
+        player.bringToTop();
+    };
 
     exports.setLevel = function (n) {
         var level = config.levels[n];
@@ -225,11 +241,8 @@
         ground = map.createLayer('Ground');
         features = map.createLayer('Features');
         
-        facing = level.facing;
-        player.x = config.player.offset_x + tileSize*level.start_x;
-        player.y = config.player.offset_y + tileSize*level.start_y;
-        player.animations.play('stand_' + facing);
-        player.bringToTop();
+        exports.resetLevel(n);
+        
         return level;
     };
     

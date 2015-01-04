@@ -7,7 +7,6 @@
     
     var goal = document.getElementById('goal');
     var blocksLeft = document.getElementById('blocksleft');
-    var gobutton = document.getElementById('gobutton');
     
     var createOverlay = function () {
         var overlay = document.createElement('div');
@@ -26,7 +25,7 @@
     
     var createDialog = function () {
         var dialog = document.createElement('div');
-        dialog.className = 'gridworld-dialog theme-dialog';
+        //dialog.className = 'gridworld-dialog theme-dialog';
         dialog.style.position = 'absolute';
         dialog.style.zIndex = '2000';
         dialog.style.display = 'none';
@@ -36,6 +35,7 @@
         var hr = document.createElement('hr');
         dialog.appendChild(hr);
         var button = document.createElement('button');
+        button.className = 'greenbutton';
         button.onclick = function () {
             exports.toggleDialog(false);
         };
@@ -47,8 +47,11 @@
     
     var overlay = createOverlay();
     var dialog = createDialog();
+    var overlayFlag;
+    var dialogCallback = null;
     
     exports.toggleOverlay = function (state, darken) {
+        overlayFlag = state;
         if (state) {
             overlay.style.opacity = (darken ? '0.5' : '0');
             overlay.style.display = 'block';
@@ -57,23 +60,41 @@
        }
     };
     
-    exports.toggleDialog = function (state, html) {
+    exports.toggleDialog = function (state, html, cb, cls) {
         if (state) {
+            if (typeof cb === 'function') {
+                dialogCallback = cb;
+            } else if (typeof cb === 'string') {
+                cls = cb;
+            }
             exports.toggleOverlay(true, true);
             dialog.style.display = 'block';
             dialog.firstChild.innerHTML = html;
+            if (cls) {
+                dialog.className = 'gridworld-dialog theme-dialog ' + cls;
+            } else {
+                dialog.className = 'gridworld-dialog theme-dialog';
+            }
             setTimeout(function () {
                 dialog.style.top = (window.innerHeight - dialog.offsetHeight)/2 + 'px';
                 dialog.style.left = (window.innerWidth - dialog.offsetWidth)/2 + 'px';
             }, 0);
         } else {
-            exports.toggleOverlay(false);
+            exports.toggleOverlay(overlayFlag, false);
             dialog.style.display = 'none';
+            if (dialogCallback) {
+                dialogCallback();
+                dialogCallback = null;
+            }
         }
     };
     
-    exports.setGoButtonHandler = function (f) {
-        gobutton.onclick = f;
+    exports.setButtonHandler = function (id, f) {
+        document.getElementById(id).onclick = f;
+    };
+    
+    exports.toggleButton = function (id, state) {
+        document.getElementById(id).style.display = (state ? 'block' : 'none');
     };
     
     exports.setGoal = function (g) {
