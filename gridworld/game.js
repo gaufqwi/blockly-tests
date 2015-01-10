@@ -11,7 +11,7 @@
     var theme;
     var baseUrl = 'assets/gridworld/';
     var config;
-    var nextStepFunc;
+    // var nextStepFunc;
     var game;
     var player;
     var map;
@@ -22,12 +22,14 @@
 
     var bootState = Object.create(Phaser.State.prototype);
     
+    /** Preload essential assets: config file and progress bar graphics */
     bootState.preload = function () {
         game.load.spritesheet('progbar',
             baseUrl + 'progbar-ss.png', 400, 50);
         game.load.json('config', baseUrl + 'config-' + theme + '.json');
     };
     
+    /** Cache config file and kick into "real" preload state */
     bootState.create = function () {
         config = game.cache.getJSON('config');
         game.state.start('preload');
@@ -35,6 +37,7 @@
 
     var preloadState = Object.create(Phaser.State.prototype);
     
+    /** Grab assets specified by config file */
     preloadState.preload = function () {
         // Set up loading display
         var progbar = game.add.sprite(
@@ -69,12 +72,14 @@
         }
     };
 
+    /** Start play state */
     preloadState.create = function () {
         game.state.start('play');
     };
 
     var playState = Object.create(Phaser.State.prototype);
     
+    /** Setup game board and report ready for action */
     playState.create = function () {
         player = game.add.sprite(0, 0, 'player');
         
@@ -89,12 +94,18 @@
         exports.gameReady.dispatch();
     };
 
+    /** Get properties of "features" tile where player is standing, if any
+     * @returns {object}
+     */
     exports.getFeatureProperties = function () {
         var tile = map.getTileWorldXY(player.x, player.y, tileSize, tileSize,
             'Features');
         return tile ? tile.properties : {};
     };
     
+    /** Set player facing and play appropriate animation
+     * @param {string} dir - compass direction
+     */
     exports.setFacing = function (dir) {
         facing = dir;
         player.animations.play('stand_' + facing);
@@ -103,6 +114,9 @@
     var directions = ['n', 'e', 's', 'w'];
     var dirmap = {n : 0, e : 1, s: 2, w: 3};
     
+    /** Change player facing in 90 increments.
+     * @param {number} n - pos = CW, neg = CCW
+     */
     exports.turn = function (n) {
         var x = (dirmap[facing] + n) % 4;
         exports.actionStart('turn');
@@ -114,10 +128,14 @@
         exports.actionFinish.dispatch('turn');
     };
     
+    /** Animate walking in the direction player is currently facing */
     exports.walkForward = function () {
         exports.walk(facing);  
     };
 
+    /** Animate player walking in specified direction
+     * @param {string} dir - Compass direction
+     */
     exports.walk = function (dir) {
         actionCanceled = false;
         exports.actionStart.dispatch('walk');
@@ -166,7 +184,6 @@
             }
             return;
         }
-        //TODO: (maybe) dispatch other events and check actionCanceled
         // Nothing in the way; go ahead
         var tween = game.add.tween(player);
         tween.to(tweenProps, config.player.speed);
@@ -185,10 +202,17 @@
         tween.start();
     };
     
+    /** Cancel current action. Gives game logic a chance to overrule
+     * command or animation
+     */
     exports.cancelAction = function () {
         actionCanceled = true;
     };
     
+    /** Initialize Phaser and module as a whole
+     * @param {object} container - DOM object holding Phaser canvas
+     * @param {string} thm - Theme. Prefix of config file to load.
+     */
     exports.init = function (container, thm) {
         theme = thm;
         game = new Phaser.Game(boardX*tileSize, boardY*tileSize,
@@ -205,18 +229,23 @@
         exports.featureSeen = new Phaser.Signal();
     };
     
-    exports.setNextStepFunction = function (f) {
-        nextStepFunc = f;
-    };
+    // exports.setNextStepFunction = function (f) {
+    //     nextStepFunc = f;
+    // };
     
+    /** Start game. Kick off boot state */
     exports.start = function () {
         game.state.start('boot');
     };
     
+    /** Pause Phaser main loop */
     exports.togglePaused = function (b) {
         game.paused = b;
     };
 
+    /** Put player back in initial position
+     * @param {number} n - 0 based level number
+     */
     exports.resetLevel = function (n) {
         var level = config.levels[n];
         facing = level.facing;
@@ -226,8 +255,15 @@
         player.bringToTop();
     };
 
+    /** Show map for new level
+     * @param {number} n - 0 based level number
+     */
     exports.setLevel = function (n) {
         var level = config.levels[n];
+        
+        if (n === config.levels.length - 1) {
+            level.last = true;
+        }
         
         if (map) {
             map.destroy();

@@ -8,6 +8,7 @@
     var goal = document.getElementById('goal');
     var blocksLeft = document.getElementById('blocksleft');
     
+    /** Build DOM objects for click-blocking overlay */
     var createOverlay = function () {
         var overlay = document.createElement('div');
         overlay.style.width = '100%';
@@ -23,6 +24,7 @@
         return overlay;
     };
     
+    /** Build DOM objects for basic modal dialog */
     var createDialog = function () {
         var dialog = document.createElement('div');
         //dialog.className = 'gridworld-dialog theme-dialog';
@@ -50,6 +52,10 @@
     var overlayFlag;
     var dialogCallback = null;
     
+    /** Show or hide overlay
+     * @param {boolean} state - true = show, false = hide
+     * @param {boolean} darken - true = shade BG, false = keep BG transparent
+     */
     exports.toggleOverlay = function (state, darken) {
         overlayFlag = state;
         if (state) {
@@ -60,6 +66,12 @@
        }
     };
     
+    /** Show or hide dialog
+     * @param {boolean} state - true = show, false = hide
+     * @param {string} html - Content of dialog
+     * @param {function} [cb] - Call back for when dialog is closed
+     * @param {string} [cls] - Optional class to add to content div for styling
+     */
     exports.toggleDialog = function (state, html, cb, cls) {
         if (state) {
             if (typeof cb === 'function') {
@@ -89,18 +101,32 @@
         }
     };
     
+    /** Attach click handler to button
+     * @param {string} id - id of button
+     * @param {function} f - onclick callback
+     */
     exports.setButtonHandler = function (id, f) {
         document.getElementById(id).onclick = f;
     };
-    
+
+    /** Show or hide button
+     * @param {string} id - id of button
+     * @param {boolean} state - true = show, false = hide
+     */
     exports.toggleButton = function (id, state) {
         document.getElementById(id).style.display = (state ? 'block' : 'none');
     };
     
+    /** Set content of goal div
+     * @param {string} g - Content for div
+     */
     exports.setGoal = function (g) {
         goal.innerHTML = g;
     };
     
+    /** Set content of blocks left indicator
+     * @param {number} n - Number of blocks left
+     */
     exports.setBlocksLeft = function (n) {
         if (n === Infinity) {
             n = '&infin;';

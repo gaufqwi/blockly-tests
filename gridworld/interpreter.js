@@ -13,6 +13,8 @@
     var activeTerp;
     var finishedCallback;
 
+    /** Create environment with "pretty" versions of movements commands to hide 
+     * synchronization logic in generated code */
     var baseCode = 
         // Walking (absolute)
         "function walkNorth() {\n" +
@@ -59,6 +61,10 @@
         "turn(-1);\n" +
         "}\n";
         
+    /** Setup interface with Phaser layer
+     * @param {object} terp - JS-Interpreter
+     * @param {object} scope - Scope object for JS terp
+     */
     var initEnv = function (terp, scope) {
         // walk
         var wrapper = function (dir) {
@@ -116,14 +122,15 @@
         terp.setProperty(scope, 'walkForwardInternal',
             terp.createNativeFunction(wrapper));
     };
- 
+
+/** Import game object into module
+ * @param {object} g - Singleton game object
+ */
 exports.init = function (g) {
     game = g;
-    // g.resume.add(function () {
-    //     setTimeout(step, 0);
-    // });
 };
 
+/** Execute one cycle of JS interpreter */
 var step = function () {
     if (!isRunning) {
         if (finishedCallback) {
@@ -140,7 +147,11 @@ var step = function () {
         finishedCallback(true);
     }
 };
- 
+
+/** Create and start instace of JS Interpreter
+ * @param {string} code - Code to run
+ * @param {function} cb - Callback to run when interpreter terminates
+ */
 exports.start = function (code, cb) {
     finishedCallback = cb;
     isRunning = true;
@@ -148,14 +159,17 @@ exports.start = function (code, cb) {
     setTimeout(step ,0);
 };
 
+/** Pause interpreter. Resumable. */
 exports.pause = function () {
     isPaused = true;
 };
 
+/** Resume interpreter */
 exports.resume = function () {
     setTimeout(step, 0);
 };
- 
+
+/** Stop interpreter. Finished callback will run. */
 exports.stop = function () {
     isRunning = false;
 };

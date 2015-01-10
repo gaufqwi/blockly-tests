@@ -181,6 +181,7 @@ body {
 
 .gridworld-dialog button {
     float: right;
+    margin: 4px;
 }
 
 /* Theme stuff */

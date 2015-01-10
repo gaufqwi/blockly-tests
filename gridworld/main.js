@@ -16,9 +16,6 @@
     '<xml><block type="gridworld_start" deletable="false" ' +
     'moveble="false" x="200" y="10"></block></xml>');
 
-    
-    //console.log('GI', Phaser, Interpreter);
-    
     var runCode = function () {
         Blockly.mainWorkspace.traceOn(true);
         Blockly.mainWorkspace.highlightBlock(null);
@@ -45,10 +42,8 @@
         if (completed) {
             ui.toggleOverlay(false);
         }
-        if (rules.getFlags().win) {
+        if (rules.getFlags().win && !level.last) {
             ui.toggleButton('nextbutton', true);
-        } else {
-            console.log('Too bad');
         }
     };
     
@@ -65,14 +60,6 @@
         Blockly.Xml.domToWorkspace(Blockly.mainWorkspace,
             defaultWorkspaceDom);
         ui.setGoal(level.goal);
-        ui.toggleButton('gobutton', true);
-        ui.toggleButton('nextbutton', false);
-        ui.toggleButton('resetbutton', false);
-    };
-
-    var resetLevel = function () {
-        console.log('reset');
-        level = game.setLevel(levelNo);
         ui.toggleButton('gobutton', true);
         ui.toggleButton('nextbutton', false);
         ui.toggleButton('resetbutton', false);
